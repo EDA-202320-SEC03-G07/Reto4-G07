@@ -62,7 +62,15 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    pass
+    
+    data_strutcs = {"comparendos": None,
+        
+                    }
+    
+    
+    data_strutcs["comparendoss"] = gr.newGraph(datastructure="ADJ_LIST", directed=False, size=10, cmpfunction=None)
+    
+    
 
 
 # Funciones para agregar informacion al modelo

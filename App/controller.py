@@ -25,6 +25,7 @@ import model
 import time
 import csv
 import tracemalloc
+import json
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -46,8 +47,23 @@ def load_data(control, filename):
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    pass
-
+    vertices = 'bogota_vertices.text'
+    arcos = 'bogota_arcos.text'
+    
+    with open(vertices, 'r') as fh:
+        for line in fh:
+            model.add_data(control, vertices, line)
+    
+    for archivo in "estacionpolicia.json", "Comparendos_2019_Bogota_D_C.geojson":
+        file = open(archivo)
+        data = json.load(file)
+        for element in data["features"]:
+            model.add_data(control, archivo, element)
+            
+    with open(arcos, 'r') as fh:
+        for line in fh:
+            model.add_data(control, arcos, line)
+    
 
 # Funciones de ordenamiento
 

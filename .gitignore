@@ -138,6 +138,10 @@ dmypy.json
 #Data
 *.csv
 *.zip
+*.txt
+*.json
+*.geojson
+
 !Data/GoodReads/books.csv
 !Data/GoodReads/book_reviews.csv
 !Data/books.csv
