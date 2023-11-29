@@ -85,26 +85,20 @@ def add_data(data_structs, archivo, data):
     #TODO: Crear la función para agregar elementos a una lista
     
     match archivo:
-        
-        case 'bogota_vertices.txt':
-                
-                
-        
-            gr.insertVertex(data_structs["comparendos"], data)
-            
-            gr.insertVertex(data_structs["estaciones"], data)
-           
-        case 'estacionpolicia.json':
-            
-            A=1
-            
-            
         case 'Comparendos_2019_Bogota_D_C.geojson':
-            a=1
-            
-         
+            # Asumiendo que data es un diccionario con la información del comparendo
+            gr.insertVertex(data_structs["comparendos"], data)
+        case 'estacionpolicia.json':
+            # Asumiendo que data es un diccionario con la información de la estación de policía
+            gr.insertVertex(data_structs["estaciones"], data)
+        case 'bogota_vertices.txt':
+            # Asumiendo que data es un diccionario con la información del vértice
+            gr.insertVertex(data_structs["comparendos"], data)
+            gr.insertVertex(data_structs["estaciones"], data)
         case 'bogota_arcos.txt':
-            a=1
+            # Asumiendo que data es un diccionario con la información del arco
+            gr.addEdge(data_structs["comparendos"], data['source'], data['destination'])
+            gr.addEdge(data_structs["estaciones"], data['source'], data['destination'])
             
         
     

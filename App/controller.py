@@ -41,28 +41,30 @@ def new_controller():
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(data_structs):
     """
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    vertices = 'bogota_vertices.txt'
-    arcos = 'bogota_arcos.txt'
-    
-    with open(vertices, 'r') as fh:
-        for line in fh:
-            model.add_data(control, vertices, line)
-    
-    for archivo in "estacionpolicia.json", "Comparendos_2019_Bogota_D_C.geojson":
-        file = open(archivo)
-        data = json.load(file)
-        for element in data["features"]:
-            model.add_data(control, archivo, element)
-            
-    with open(arcos, 'r') as fh:
-        for line in fh:
-            model.add_data(control, arcos, line)
-    
+    with open('Comparendos_2019_Bogota_D_C.geojson') as f:
+        comparendos = json.load(f)
+    for comparendo in comparendos:
+        model.add_data(data_structs, 'Comparendos_2019_Bogota_D_C.geojson', comparendo)
+
+    with open('estacionpolicia.json') as f:
+        estaciones = json.load(f)
+    for estacion in estaciones:
+        model.add_data(data_structs, 'estacionpolicia.json', estacion)
+
+    with open('bogota_vertices.txt') as f:
+        vertices = f.readlines()
+    for vertice in vertices:
+        model.add_data(data_structs, 'bogota_vertices.txt', vertice)
+
+    with open('bogota_arcos.txt') as f:
+        arcos = f.readlines()
+    for arco in arcos:
+        model.add_data(data_structs, 'bogota_arcos.txt', arco)
 
 # Funciones de ordenamiento
 
