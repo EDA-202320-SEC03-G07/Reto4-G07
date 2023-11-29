@@ -23,7 +23,6 @@
 import config as cf
 import model
 import time
-import csv
 import tracemalloc
 import json
 
@@ -37,7 +36,7 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    return model.new_data_structs()
 
 
 # Funciones para la carga de datos
@@ -47,8 +46,8 @@ def load_data(control, filename):
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    vertices = 'bogota_vertices.text'
-    arcos = 'bogota_arcos.text'
+    vertices = 'bogota_vertices.txt'
+    arcos = 'bogota_arcos.txt'
     
     with open(vertices, 'r') as fh:
         for line in fh:

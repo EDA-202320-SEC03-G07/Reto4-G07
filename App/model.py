@@ -63,34 +63,66 @@ def new_data_structs():
     """
     #TODO: Inicializar las estructuras de datos
     
-    data_strutcs = {"comparendos": None,
+    data_structs = {"comparendos": None,
+                    "estaciones": None,
         
                     }
     
     
-    data_strutcs["comparendoss"] = gr.newGraph(datastructure="ADJ_LIST", directed=False, size=10, cmpfunction=None)
+    data_structs["comparendos"] = gr.newGraph(datastructure="ADJ_LIST", directed=False)
+    
+    data_structs["estaciones"] = gr.newGraph(datastructure="ADJ_LIST", directed=False)
     
     
 
 
 # Funciones para agregar informacion al modelo
 
-def add_data(data_structs, data):
+def add_data(data_structs, archivo, data):
     """
     Función para agregar nuevos elementos a la lista
     """
     #TODO: Crear la función para agregar elementos a una lista
-    pass
+    
+    match archivo:
+        
+        case 'bogota_vertices.txt':
+                
+                
+        
+            gr.insertVertex(data_structs["comparendos"], data)
+            
+            gr.insertVertex(data_structs["estaciones"], data)
+           
+        case 'estacionpolicia.json':
+            
+            A=1
+            
+            
+        case 'Comparendos_2019_Bogota_D_C.geojson':
+            a=1
+            
+         
+        case 'bogota_arcos.txt':
+            a=1
+            
+        
+    
 
 
 # Funciones para creacion de datos
 
-def new_data(id, info):
+def new_vertex(data, archivo):
     """
     Crea una nueva estructura para modelar los datos
     """
     #TODO: Crear la función para estructurar los datos
-    pass
+    
+    match archivo:
+        case "estaciones":
+        
+            data = {"lat": data["EPOLATITUD"],
+                    "long": data["EPOLONGITU"],}
 
 
 # Funciones de consulta
