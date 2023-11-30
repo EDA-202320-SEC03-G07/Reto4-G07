@@ -86,17 +86,17 @@ def add_data(data_structs, archivo, data):
     
     match archivo:
         case 'Comparendos_2019_Bogota_D_C.geojson':
-            # Asumiendo que data es un diccionario con la información del comparendo
+           
             gr.insertVertex(data_structs["comparendos"], data)
         case 'estacionpolicia.json':
-            # Asumiendo que data es un diccionario con la información de la estación de policía
+            
             gr.insertVertex(data_structs["estaciones"], data)
         case 'bogota_vertices.txt':
-            # Asumiendo que data es un diccionario con la información del vértice
+            
             gr.insertVertex(data_structs["comparendos"], data)
             gr.insertVertex(data_structs["estaciones"], data)
         case 'bogota_arcos.txt':
-            # Asumiendo que data es un diccionario con la información del arco
+            
             gr.addEdge(data_structs["comparendos"], data['source'], data['destination'])
             gr.addEdge(data_structs["estaciones"], data['source'], data['destination'])
             
