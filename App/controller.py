@@ -46,25 +46,33 @@ def load_data(data_structs):
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    with open('Comparendos_2019_Bogota_D_C.geojson') as f:
-        comparendos = json.load(f)
-    for comparendo in comparendos:
-        model.add_data(data_structs, 'Comparendos_2019_Bogota_D_C.geojson', comparendo)
-
-    with open('estacionpolicia.json') as f:
-        estaciones = json.load(f)
-    for estacion in estaciones:
-        model.add_data(data_structs, 'estacionpolicia.json', estacion)
-
+    
     with open('bogota_vertices.txt') as f:
         vertices = f.readlines()
     for vertice in vertices:
         model.add_data(data_structs, 'bogota_vertices.txt', vertice)
+    model.insert_aprox(data_structs)
+    
+    
+    with open('Comparendos_2019_Bogota_D_C.geojson') as f:
+        comparendos = json.load(f)
+    for comparendo in comparendos["features"]:
+        model.add_data(data_structs, 'Comparendos_2019_Bogota_D_C.geojson', comparendo["properties"])
 
+
+    with open('estacionpolicia.json') as f:
+        estaciones = json.load(f)
+    for estacion in estaciones["features"]:
+        model.add_data(data_structs, 'estacionpolicia.json', estacion["properties"])
+
+    
     with open('bogota_arcos.txt') as f:
         arcos = f.readlines()
     for arco in arcos:
         model.add_data(data_structs, 'bogota_arcos.txt', arco)
+        
+      
+
 
 # Funciones de ordenamiento
 

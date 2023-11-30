@@ -46,6 +46,7 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+import math as mt
 assert cf
 
 """
@@ -64,14 +65,31 @@ def new_data_structs():
     #TODO: Inicializar las estructuras de datos
     
     data_structs = {"comparendos": None,
-                    "estaciones": None,
+                    "ditsancias": None,
+                    "mapa_vertices": None,
+                    "mapa_areas": None,
+                    
+                    "lat_max": float("-inf"),	
+                    "lat_min": float("inf"),
+                    "long_max": float("-inf"),
+                    "long_min": float("inf"),
+                    
+                    "long_mid": 0,
+                    "lat_mid": 0,
+                    
         
                     }
     
     
     data_structs["comparendos"] = gr.newGraph(datastructure="ADJ_LIST", directed=False)
     
-    data_structs["estaciones"] = gr.newGraph(datastructure="ADJ_LIST", directed=False)
+    data_structs["distancias"] = gr.newGraph(datastructure="ADJ_LIST", directed=False)
+    
+    data_structs["mapa_vertices"] = mp.newMap(numelements=228045, maptype="PROBING", loadfactor=0.5)
+    
+    data_structs["mapa_areas"] = mp.newMap(numelements=4, maptype="PROBING", loadfactor=0.5)
+    
+    
     
     
 
@@ -83,22 +101,270 @@ def add_data(data_structs, archivo, data):
     Función para agregar nuevos elementos a la lista
     """
     #TODO: Crear la función para agregar elementos a una lista
+    mapa_vertices = data_structs["mapa_vertices"]
+    
+    long_max = data_structs["long_max"]
+    long_min = data_structs["long_min"]
+    
+    lat_max = data_structs["lat_max"]
+    lat_min = data_structs["lat_min"]
+    
+    long_mid = data_structs["long_mid"]
+    lat_mid = data_structs["lat_mid"]
+    
     
     match archivo:
-        case 'Comparendos_2019_Bogota_D_C.geojson':
+        case "bogota_vertices.txt":
+            data = data.split(" ")
+            id = data[0]
+            longitud = data[1]
+            latitud = data[2]
+            vertice = {"long": longitud,
+                       "lat": latitud,
+                       "estacion": lt.newList("ARRAY_LIST"),
+                       "comparendo": lt.newList("ARRAY_LIST"),
+                       }
+            mp.put(mapa_vertices, id, vertice)
+            
+            gr.insertVertex(data_structs["distancias"], id)
+            gr.insertVertex(data_structs["comparendos"], id)
+            
            
-            gr.insertVertex(data_structs["comparendos"], data)
-        case 'estacionpolicia.json':
+           
+            if longitud > long_max:
+                long_max = longitud
+                
+            if longitud < long_min:
+                long_min = longitud 
+                
+            if latitud > lat_max:
+                lat_max = latitud
+                
+            if latitud < lat_min:
+                lat_min = latitud
+             
+             
+            long_mid = (long_max - long_min) / 2
+            lat_mid = (lat_max - lat_min) / 2
             
-            gr.insertVertex(data_structs["estaciones"], data)
-        case 'bogota_vertices.txt':
             
-            gr.insertVertex(data_structs["comparendos"], data)
-            gr.insertVertex(data_structs["estaciones"], data)
-        case 'bogota_arcos.txt':
+                 
+        case "estacionpolicia.json":
             
-            gr.addEdge(data_structs["comparendos"], data['source'], data['destination'])
-            gr.addEdge(data_structs["estaciones"], data['source'], data['destination'])
+            area_seleccionada = None
+            
+            entrada_lista_a1 = mp.get(data_structs["mapa_areas"], "a1")
+            lista_a1 = me.getValue(entrada_lista_a1)
+            
+            entrada_lista_a2 = mp.get(data_structs["mapa_areas"], "a2")
+            lista_a2 = me.getValue(entrada_lista_a2)
+            
+            entrada_lista_a3 = mp.get(data_structs["mapa_areas"], "a3")
+            lista_a3 = me.getValue(entrada_lista_a3)
+            
+            entrada_lista_a4 = mp.get(data_structs["mapa_areas"], "a4")
+            lista_a4 = me.getValue(entrada_lista_a4)
+            
+            posicion = data["EPOLONGITU"] > long_mid, data["EPOLATITUD"] > lat_mid
+            
+            
+            match posicion:
+                
+                case True, True: # Cuadrante 1
+
+                    area_seleccionada = lista_a1
+                    
+                case False, True: # Cuadrante 2
+                    
+                    area_seleccionada = lista_a2
+                    
+                case False, False: # Cuadrante 3
+                    
+                    area_seleccionada = lista_a3
+                    
+                case True, False: # Cuadrante 4
+                    
+                    area_seleccionada = lista_a4
+            
+            
+            
+            id_mas_cercano = None
+            distancia_mas_cercano = float("inf")
+            for vertice_id in lt.iterator(area_seleccionada):
+                entrada = mp.get(mapa_vertices, vertice_id)
+                vertice = me.getValue(entrada)
+                distancia = haversine(data["EPOLATITUD"], data["EPOLONGITU"], vertice["lat"], vertice["long"])
+                if distancia < distancia_mas_cercano:
+                    distancia_mas_cercano = distancia
+                    id_mas_cercano = vertice_id
+            
+            entrada = mp.get(mapa_vertices, id_mas_cercano)
+            vertice = me.getValue(entrada)
+            
+            lista_estacion = vertice["estacion"]
+            
+            lt.addLast(lista_estacion, data)
+
+                    
+        
+        case 'Comparendos_2019_Bogota_D_C.geojson':
+            
+            area_seleccionada = None
+            
+            entrada_lista_a1 = mp.get(data_structs["mapa_areas"], "a1")
+            lista_a1 = me.getValue(entrada_lista_a1)
+            
+            entrada_lista_a2 = mp.get(data_structs["mapa_areas"], "a2")
+            lista_a2 = me.getValue(entrada_lista_a2)
+            
+            entrada_lista_a3 = mp.get(data_structs["mapa_areas"], "a3")
+            lista_a3 = me.getValue(entrada_lista_a3)
+            
+            entrada_lista_a4 = mp.get(data_structs["mapa_areas"], "a4")
+            lista_a4 = me.getValue(entrada_lista_a4)
+             
+            posicion = data["LONGITUD"] > long_mid, data["LATITUD"] > lat_mid
+            
+            match posicion:
+                
+                case True, True: # Cuadrante 1
+
+                    area_seleccionada = lista_a1
+                    
+                case False, True: # Cuadrante 2
+                    
+                    area_seleccionada = lista_a2
+                    
+                case False, False: # Cuadrante 3
+                    
+                    area_seleccionada = lista_a3
+                    
+                case True, False: # Cuadrante 4
+                    
+                    area_seleccionada = lista_a4
+            
+            
+            
+            id_mas_cercano = None
+            distancia_mas_cercano = float("inf")
+            for vertice_id in lt.iterator(area_seleccionada):
+                entrada = mp.get(mapa_vertices, vertice_id)
+                vertice = me.getValue(entrada)
+                distancia = haversine(data["LATITUD"], data["LONGITUD"], vertice["lat"], vertice["long"])
+                if distancia < distancia_mas_cercano:
+                    distancia_mas_cercano = distancia
+                    id_mas_cercano = vertice_id
+            
+            entrada = mp.get(mapa_vertices, id_mas_cercano)
+            vertice = me.getValue(entrada)
+            
+            lista_estacion = vertice["estacion"]
+            
+            lt.addLast(lista_estacion, data)
+            
+            
+        case "bogota_arcos.txt":
+            data = data.split(" ")
+            id_origen = data[0]
+            ids_adj = data[1:]
+            
+            for id_adj in ids_adj:
+                
+                entrada_vertice_origen = mp.get(mapa_vertices, id_origen)
+                vertice_origen = me.getValue(entrada_vertice_origen)
+                
+                entrada_vertice_adj = mp.get(mapa_vertices, id_adj)
+                vertice_adj = me.getValue(entrada_vertice_adj)
+                
+                
+                peso_distancia = haversine(vertice_origen["lat"], vertice_origen["long"], vertice_adj["lat"], vertice_adj["long"])
+                peso_comparendos = lt.size(vertice_origen["comparendo"]) + lt.size(vertice_adj["comparendo"])
+                
+                
+                
+                gr.addEdge(data_structs["distancias"], vertice_origen, vertice_adj, peso_distancia)
+                gr.addEdge(data_structs["comparendos"], vertice_origen, vertice_adj, peso_comparendos)
+                
+            
+            
+        
+            
+        
+def insert_aprox(data_structs):
+    
+    vertices = data_structs["mapa_vertices"]
+    
+    mapa_areas = data_structs["mapa_areas"]
+    
+    vertices_ids = mp.keySet(vertices)
+    
+    for id in lt.iterator(vertices_ids):
+        entrada = mp.get(vertices, id)
+        vertice = me.getValue(entrada)
+        vertice_long = vertice["long"]
+        vertice_lat = vertice["lat"]
+        
+        mitad_longitud = (data_structs["long_max"] - data_structs["long_min"]) / 2
+        mitad_latitud = (data_structs["lat_max"] - data_structs["lat_min"]) / 2
+        
+        
+        posicion = vertice_long >= mitad_longitud, vertice_lat >= mitad_latitud
+        
+        match posicion:
+            
+            case True, True:
+       
+                if mp.contains(mapa_areas, "a1"):
+                    elemento = mp.get(mapa_areas, "a1")
+                    lista_area = me.getValue(elemento)
+                    lt.addLast(lista_area, id)
+                        
+                else:
+                    info = lt.newList('ARRAY_LIST')
+                    lt.addLast(info, id)
+                    mp.put(mapa_areas, "a1", id)
+            
+            case False, True:
+                
+                if mp.contains(mapa_areas, "a2"):
+                    elemento = mp.get(mapa_areas, "a2")
+                    lista_area = me.getValue(elemento)
+                    lt.addLast(lista_area, id)
+                      
+                else:
+                    info = lt.newList('ARRAY_LIST')
+                    lt.addLast(info, id)
+                    mp.put(data_structs["mapa_areas"], "a2", id)
+                    
+            case False, False:
+                
+                if mp.contains(mapa_areas, "a3"):
+                    elemento = mp.get(mapa_areas, "a3")
+                    lista_area = me.getValue(elemento)
+                    lt.addLast(lista_area, id)
+                    
+                else:
+                    info = lt.newList('ARRAY_LIST')
+                    lt.addLast(info, id)
+                    mp.put(data_structs["mapa_areas"], "a3", id)
+                    
+            case True, False:
+                
+                if mp.contains(mapa_areas, "a4"):
+                    elemento = mp.get(mapa_areas, "a4")
+                    lista_area = me.getValue(elemento)
+                    lt.addLast(lista_area, id)
+                    
+                else:
+                    info = lt.newList('ARRAY_LIST')
+                    lt.addLast(info, id)
+                    mp.put(data_structs["mapa_areas"], "a4", id)
+                    
+                
+            
+
+        
+        
             
         
     
@@ -106,20 +372,7 @@ def add_data(data_structs, archivo, data):
 
 # Funciones para creacion de datos
 
-def new_vertex(data, archivo):
-    """
-    Crea una nueva estructura para modelar los datos
-    """
-    #TODO: Crear la función para estructurar los datos
-    
-    match archivo:
-        case "estaciones":
-        
-            data = {"lat": data["EPOLATITUD"],
-                    "long": data["EPOLONGITU"],}
 
-
-# Funciones de consulta
 
 def get_data(data_structs, id):
     """
@@ -233,3 +486,18 @@ def sort(data_structs):
     """
     #TODO: Crear función de ordenamiento
     pass
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Función que calcula la distancia entre dos puntos en la tierra
+    """
+    radio_tierra = 6371
+    lat1 = mt.radians(lat1)
+    lon1 = mt.radians(lon1)
+    lat2 = mt.radians(lat2)
+    lon2 = mt.radians(lon2)
+    
+    distancia = 2 * radio_tierra * mt.asin(mt.sqrt(mt.sin((lat2-lat1)/2)**2 + mt.cos(lat1) * mt.cos(lat2) * mt.sin((lon2-lon1)/2)**2))
+    
+    return distancia
