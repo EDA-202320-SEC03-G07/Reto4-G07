@@ -19,12 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
-
+ 
 import config as cf
 import model
 import time
 import tracemalloc
 import json
+import csv
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -47,26 +48,34 @@ def load_data(data_structs):
     """
     # TODO: Realizar la carga de datos
     
-    with open('bogota_vertices.txt') as f:
+    
+   
+
+    
+    
+    vertices_archivo = cf.data_dir + 'bogota_vertices.txt'
+    with open(vertices_archivo, 'r') as f:
         vertices = f.readlines()
     for vertice in vertices:
         model.add_data(data_structs, 'bogota_vertices.txt', vertice)
-    model.insert_aprox(data_structs)
     
     
-    with open('Comparendos_2019_Bogota_D_C.geojson') as f:
-        comparendos = json.load(f)
-    for comparendo in comparendos["features"]:
-        model.add_data(data_structs, 'Comparendos_2019_Bogota_D_C.geojson', comparendo["properties"])
+    estaciones_archivo = cf.data_dir + 'estacionpolicia_bogota_vertices.csv'
+    f = open(estaciones_archivo, 'r', encoding='utf-8')
+    estaciones = csv.DictReader(f)
+    for estacion in estaciones:
+        model.add_data(data_structs, 'estacionpolicia_bogota_vertices.csv', estacion)
+        
+        
+    comparendos_archivo = cf.data_dir + 'comparendos_2019_bogota_vertices.csv'
+    f = open(comparendos_archivo, 'r', encoding='utf-8')
+    comparendos = csv.DictReader(f)
+    for comparendo in comparendos:
+        model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
+     
 
-
-    with open('estacionpolicia.json') as f:
-        estaciones = json.load(f)
-    for estacion in estaciones["features"]:
-        model.add_data(data_structs, 'estacionpolicia.json', estacion["properties"])
-
-    
-    with open('bogota_arcos.txt') as f:
+    arcos_archivo = cf.data_dir + 'bogota_arcos.txt'
+    with open(arcos_archivo, 'r') as f:
         arcos = f.readlines()
     for arco in arcos:
         model.add_data(data_structs, 'bogota_arcos.txt', arco)

@@ -67,15 +67,7 @@ def new_data_structs():
     data_structs = {"comparendos": None, # Grafo: peso numéro de comparendos
                     "ditsancias": None, # Grafo: peso distancia
                     "mapa_vertices": None, # Mapa: {id: vertice}
-                    "mapa_areas": None, # Mapa: {area: lista de vertices}
-                    
-                    "lat_max": float("-inf"), # Latitud máxima	
-                    "lat_min": float("inf"), # Latitud mínima
-                    "long_max": float("-inf"), # Longitud máxima
-                    "long_min": float("inf"), # Longitud mínima
-                    
-                    "long_mid": 0, # Punto medio de la longitud
-                    "lat_mid": 0, # Punto medio de la latitud
+                   
                     
         
                     }
@@ -87,10 +79,9 @@ def new_data_structs():
     
     data_structs["mapa_vertices"] = mp.newMap(numelements=228045, maptype="PROBING", loadfactor=0.5)
     
-    data_structs["mapa_areas"] = mp.newMap(numelements=4, maptype="PROBING", loadfactor=0.5)
     
     
-    
+    return data_structs
     
 
 
@@ -103,22 +94,14 @@ def add_data(data_structs, archivo, data):
     #TODO: Crear la función para agregar elementos a una lista
     mapa_vertices = data_structs["mapa_vertices"] # Mapa: {id: vertice}
     
-    long_max = data_structs["long_max"] 
-    long_min = data_structs["long_min"]
-    
-    lat_max = data_structs["lat_max"]
-    lat_min = data_structs["lat_min"]
-    
-    long_mid = data_structs["long_mid"]
-    lat_mid = data_structs["lat_mid"]
     
     
     match archivo:
         case "bogota_vertices.txt": # Se agrega un vertice al mapa de vertices
-            data = data.split(" ") # Se formatea la información de string "# # #" a lista ["#", "#", "#"]
+            data = data.split(',') # Se formatea la información de string "# # #" a lista ["#", "#", "#"]
             id = data[0] # Se obtiene el id del vertice en la primera posición de la lista
-            longitud = data[1] # Se obtiene la longitud del vertice en la segunda posición de la lista
-            latitud = data[2] # Se obtiene la latitud del vertice en la tercera posición de la lista
+            longitud = float(data[1]) # Se obtiene la longitud del vertice en la segunda posición de la lista
+            latitud = float(data[2]) # Se obtiene la latitud del vertice en la tercera posición de la lista
             
             
             # Se crea un vertice con la información obtenida en formato dict
@@ -135,235 +118,68 @@ def add_data(data_structs, archivo, data):
             gr.insertVertex(data_structs["comparendos"], id) # Se agrega el vertice al grafo de comparendos
             
            
-           # Acttualización de los valores máximos y mínimos de latitud y longitud
-            if longitud > long_max:
-                long_max = longitud
-                
-            if longitud < long_min:
-                long_min = longitud 
-                
-            if latitud > lat_max:
-                lat_max = latitud
-                
-            if latitud < lat_min:
-                lat_min = latitud
-             
-            # Actualización de los puntos medios de latitud y longitud 
-            long_mid = (long_max - long_min) / 2
-            lat_mid = (lat_max - lat_min) / 2
+        case "estacionpolicia_bogota_vertices.csv":
             
-            
-                 
-        case "estacionpolicia.json":
-            
-            area_seleccionada = None 
-            
-            entrada_lista_a1 = mp.get(data_structs["mapa_areas"], "a1")
-            lista_a1 = me.getValue(entrada_lista_a1)
-            
-            entrada_lista_a2 = mp.get(data_structs["mapa_areas"], "a2")
-            lista_a2 = me.getValue(entrada_lista_a2)
-            
-            entrada_lista_a3 = mp.get(data_structs["mapa_areas"], "a3")
-            lista_a3 = me.getValue(entrada_lista_a3)
-            
-            entrada_lista_a4 = mp.get(data_structs["mapa_areas"], "a4")
-            lista_a4 = me.getValue(entrada_lista_a4)
-            
-            posicion = data["EPOLONGITU"] > long_mid, data["EPOLATITUD"] > lat_mid
-            
-            
-            match posicion:
-                
-                case True, True: # Cuadrante 1
-
-                    area_seleccionada = lista_a1
-                    
-                case False, True: # Cuadrante 2
-                    
-                    area_seleccionada = lista_a2
-                    
-                case False, False: # Cuadrante 3
-                    
-                    area_seleccionada = lista_a3
-                    
-                case True, False: # Cuadrante 4
-                    
-                    area_seleccionada = lista_a4
-            
-            
-            
-            id_mas_cercano = None # id del vertice más cercano a la estación de policia inicializado en ninguno
-            distancia_mas_cercano = float("inf") # Distancia más cercana inicializada en infinito
-            for vertice_id in lt.iterator(area_seleccionada): # Para cada vertice en el cuadrante seleccionado
-                entrada = mp.get(mapa_vertices, vertice_id) # Se obtiene la pareja {llave: id, valor: vertice}
-                vertice = me.getValue(entrada) # Se obtiene el vertice de la pareja
-                distancia = haversine(data["EPOLATITUD"], data["EPOLONGITU"], vertice["lat"], vertice["long"]) # Se calcula la distancia entre la estación de policia y el vertice
-                
-                if distancia < distancia_mas_cercano: # Si la distancia es menor a la distancia más cercana
-                    distancia_mas_cercano = distancia # Se actualiza la distancia más cercana
-                    id_mas_cercano = vertice_id # Se actualiza el id del vertice más cercano
-            
-            entrada = mp.get(mapa_vertices, id_mas_cercano) # Se obtiene la pareja {llave: id, valor: vertice}
-            vertice = me.getValue(entrada) # Se obtiene el vertice de la pareja
-            
-        
-            lt.addLast(vertice["estaciones"], data) # Se agrega la estación de policia a la lista de estaciones del vertice
-
-                    
-        
-        case 'Comparendos_2019_Bogota_D_C.geojson':
-            
-            area_seleccionada = None
-            
-            entrada_lista_a1 = mp.get(data_structs["mapa_areas"], "a1")
-            lista_a1 = me.getValue(entrada_lista_a1)
-            
-            entrada_lista_a2 = mp.get(data_structs["mapa_areas"], "a2")
-            lista_a2 = me.getValue(entrada_lista_a2)
-            
-            entrada_lista_a3 = mp.get(data_structs["mapa_areas"], "a3")
-            lista_a3 = me.getValue(entrada_lista_a3)
-            
-            entrada_lista_a4 = mp.get(data_structs["mapa_areas"], "a4")
-            lista_a4 = me.getValue(entrada_lista_a4)
-             
-            posicion = data["LONGITUD"] > long_mid, data["LATITUD"] > lat_mid
-            
-            match posicion:
-                
-                case True, True: # Cuadrante 1
-
-                    area_seleccionada = lista_a1
-                    
-                case False, True: # Cuadrante 2
-                    
-                    area_seleccionada = lista_a2
-                    
-                case False, False: # Cuadrante 3
-                    
-                    area_seleccionada = lista_a3
-                    
-                case True, False: # Cuadrante 4
-                    
-                    area_seleccionada = lista_a4
-            
-        
-            id_mas_cercano = None # id del vertice más cercano al comparendo
-            distancia_mas_cercano = float("inf") # Distancia más cercana inicializada en infinito
-            for vertice_id in lt.iterator(area_seleccionada):
-                entrada = mp.get(mapa_vertices, vertice_id)
-                vertice = me.getValue(entrada)
-                distancia = haversine(data["LATITUD"], data["LONGITUD"], vertice["lat"], vertice["long"])
-                if distancia < distancia_mas_cercano:
-                    distancia_mas_cercano = distancia
-                    id_mas_cercano = vertice_id
-            
-            entrada = mp.get(mapa_vertices, id_mas_cercano)
-            vertice = me.getValue(entrada)
-            
-            
-            
-            lt.addLast(vertice["comparendos"], data)
-            
-            
-        case "bogota_arcos.txt":
-            data = data.split(" ")
-            id_origen = data[0]
-            ids_adj = data[1:]
-            
-            for id_adj in ids_adj:
-                
-                entrada_vertice_origen = mp.get(mapa_vertices, id_origen)
-                vertice_origen = me.getValue(entrada_vertice_origen)
-                
-                entrada_vertice_adj = mp.get(mapa_vertices, id_adj)
-                vertice_adj = me.getValue(entrada_vertice_adj)
+            vertice_mas_cercano = data["VERTICES"]
+            if mp.contains(mapa_vertices, vertice_mas_cercano):
+                entrada_vertice =  mp.get(mapa_vertices, vertice_mas_cercano)
+                vertice = me.getValue(entrada_vertice)
+                lt.addLast(vertice["estaciones"], data)
                 
                 
-                peso_distancia = haversine(vertice_origen["lat"], vertice_origen["long"], vertice_adj["lat"], vertice_adj["long"])
-                peso_comparendos = lt.size(vertice_origen["comparendo"]) + lt.size(vertice_adj["comparendo"])
-                
-                
-                
-                gr.addEdge(data_structs["distancias"], vertice_origen, vertice_adj, peso_distancia)
-                gr.addEdge(data_structs["comparendos"], vertice_origen, vertice_adj, peso_comparendos)
-                
             
-            
-        
-            
-        
-def insert_aprox(data_structs):
-    
-    vertices = data_structs["mapa_vertices"] # Mapa: {llave:id, valor: vertice}
-    
-    mapa_areas = data_structs["mapa_areas"] # Mapa: {llave: area, valor: lista de vertices}
-    
-    vertices_ids = mp.keySet(vertices) # Lista de ids de los vertices
-    
-    long_mid = data_structs["long_mid"] # Punto medio de la longitud
-    lat_mid = data_structs["lat_mid"] # Punto medio de la latitud
-    
-    
-    for id in lt.iterator(vertices_ids): # Para cada id en el arreglo tipo lista de ids de los vertices
-        entrada = mp.get(vertices, id) # Se obtiene pareja {llave: id, valor: vertice}
-        vertice = me.getValue(entrada) # Se obtiene el vertice de la pareja
-        vertice_long = vertice["long"] # Se obtiene la longitud del vertice
-        vertice_lat = vertice["lat"] # Se obtiene la latitud del vertice
-        
-
-        posicion = vertice_long >= long_mid, vertice_lat >= lat_mid # Se determina la posición del vertice en el mapa de areas
-        
-        match posicion:
-            
-            case True, True: # Cuadrante 1
-       
-                if mp.contains(mapa_areas, "a1"): # Si el mapa de areas contiene el cuadrante 1
-                    elemento = mp.get(mapa_areas, "a1") # Se obtiene la pareja {llave: "a1", valor: lista de vertices}
-                    lista_area = me.getValue(elemento) # Se obtiene la lista de vertices de la pareja
-                    lt.addLast(lista_area, id) # Se agrega el id del vertice a la lista de vertices del cuadrante 1
-                        
-                else: # Si el mapa de areas no contiene el cuadrante 1
-                    info = lt.newList('ARRAY_LIST') # Se crea una lista vacía para los vertices del cuadrante 1
-                    lt.addLast(info, id) # Se agrega el id del vertice a la lista vacía
-                    mp.put(mapa_areas, "a1", id) # Se agrega la pareja {llave: "a1", valor: lista de vertices} al mapa de areas
-            
-            case False, True: # Cuadrante 2
-                
-                if mp.contains(mapa_areas, "a2"): # Si el mapa de areas contiene el cuadrante 2
-                    elemento = mp.get(mapa_areas, "a2") # Se obtiene la pareja {llave: "a2", valor: lista de vertices}
-                    lista_area = me.getValue(elemento) # Se obtiene la lista de vertices de la pareja
-                    lt.addLast(lista_area, id) # Se agrega el id del vertice a la lista de vertices del cuadrante 2
+        case 'comparendos_2019_bogota_vertices.csv':
                       
-                else: # Si el mapa de areas no contiene el cuadrante 2
-                    info = lt.newList('ARRAY_LIST') # Se crea una lista vacía para los vertices del cuadrante 2
-                    lt.addLast(info, id) # Se agrega el id del vertice a la lista vacía
-                    mp.put(data_structs["mapa_areas"], "a2", id) # Se agrega la pareja {llave: "a2", valor: lista de vertices} al mapa de areas
+            vertice_mas_cercano = data["VERTICES"]
+            if mp.contains(mapa_vertices, vertice_mas_cercano):
+                entrada_vertice =  mp.get(mapa_vertices, vertice_mas_cercano)
+                vertice = me.getValue(entrada_vertice)
+                lt.addLast(vertice["comparendos"], data)
                     
-            case False, False: # Cuadrante 3
                 
-                if mp.contains(mapa_areas, "a3"): # Si el mapa de areas contiene el cuadrante 3
-                    elemento = mp.get(mapa_areas, "a3") # Se obtiene la pareja {llave: "a3", valor: lista de vertices}
-                    lista_area = me.getValue(elemento) # Se obtiene la lista de vertices de la pareja
-                    lt.addLast(lista_area, id) # Se agrega el id del vertice a la lista de vertices del cuadrante 3
-                    
-                else: # Si el mapa de areas no contiene el cuadrante 3
-                    info = lt.newList('ARRAY_LIST') # Se crea una lista vacía para los vertices del cuadrante 3
-                    lt.addLast(info, id) # Se agrega el id del vertice a la lista vacía
-                    mp.put(data_structs["mapa_areas"], "a3", id) # Se agrega la pareja {llave: "a3", valor: lista de vertices} al mapa de areas
-                    
-            case True, False: # Cuadrante 4
                 
-                if mp.contains(mapa_areas, "a4"): # Si el mapa de areas contiene el cuadrante 4
-                    elemento = mp.get(mapa_areas, "a4") # Se obtiene la pareja {llave: "a4", valor: lista de vertices}
-                    lista_area = me.getValue(elemento) # Se obtiene la lista de vertices de la pareja
-                    lt.addLast(lista_area, id) # Se agrega el id del vertice a la lista de vertices del cuadrante 4
-                    
-                else: # Si el mapa de areas no contiene el cuadrante 4
-                    info = lt.newList('ARRAY_LIST') # Se crea una lista vacía para los vertices del cuadrante 4
-                    lt.addLast(info, id) # Se agrega el id del vertice a la lista vacía
-                    mp.put(data_structs["mapa_areas"], "a4", id) # Se agrega la pareja {llave: "a4", valor: lista de vertices} al mapa de areas
+                           
+        case "bogota_arcos.txt":
+            data = data.split() # Se formatea la información de string "# # #" a lista ["#", "#", "#"]
+            id_origen = data[0] # Se obtiene el id del vertice origen en la primera posición de la lista
+            ids_destino = data[1:] # Se obtiene el id del vertice destino en la segunda posición de la lista
+            
+            entrada_vertice_origen = mp.get(mapa_vertices, id_origen)
+            vertice_origen = me.getValue(entrada_vertice_origen)
+            
+            longitud_origen = vertice_origen["long"]
+            latitud_origen = vertice_origen["lat"]
+            estaciones_origen = vertice_origen["estaciones"]
+            n_estaciones_origen = lt.size(estaciones_origen)
+            
+            
+            for id_destino in ids_destino:
+                
+                
+                entrada_vertice_destino = mp.get(mapa_vertices, id_destino)
+                vertice_destino = me.getValue(entrada_vertice_destino)
+                
+                latitud_destino = vertice_destino["lat"]
+                longitud_destino = vertice_destino["long"]
+                comparendos_destino = vertice_destino["comparendos"]
+                
+                peso_distancia = haversine(latitud_origen, longitud_origen, latitud_destino, longitud_destino)
+                n_comparendos_destino = lt.size(comparendos_destino)
+                
+                peso_comparendos = n_comparendos_destino + n_estaciones_origen
+                
+        
+                gr.addEdge(data_structs["distancias"], id_origen, id_destino, peso_distancia) # Se agrega el arco al grafo de distancias
+                
+                
+                gr.addEdge(data_structs["comparendos"], id_origen, id_destino, peso_comparendos) # Se agrega el arco al grafo de comparendos
+            
+            
+            
+        
+            
+        
+
                     
                 
             
