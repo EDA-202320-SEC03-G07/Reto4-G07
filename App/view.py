@@ -31,6 +31,7 @@ from DISClib.DataStructures import mapentry as me
 assert cf
 from tabulate import tabulate
 import traceback
+import pandas as pd
 
 """
 La vista se encarga de la interacción con el usuario
@@ -111,24 +112,70 @@ def print_req_4(control):
 
 def print_req_5(control):
     """
-        Función que imprime la solución del Requerimiento 5 en consola
+    Function that prints the solution of Requirement 5 to the console
     """
-    # try: 
-    consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
-    consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
-    
-    total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
-    print(f"\n====================================== Req No. 2 Inputs ======================================\n"
-            f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
-            f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
-            f"====================================== Req No. 2 Results ======================================\n"
-            f"Total de Cámaras Puestas: {total_camaras}\n"
-            f"Identificadores de las Cámaras: {id_vertices}\n"
-            f"Conecciones entre Cámaras: {arcos}\n"
-            f"Extensión de la Red de Cámaras: {extension}\n"
-            f"Costo de la Red de Cámaras: {costo}\n"
-            f"El tiempo de ejecución del requerimiento es: {dt} m/s\n"
-            f"La memoria usada del requerimiento es: {dm} kB\n")
+    try: 
+        consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
+        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
+        
+        total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
+        
+        
+        def create_adjacency_matrix_with_headers(arcs):
+            vertices = set()
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertices.add(key['key'])
+                    vertices.add(key['value']['vertexA'])
+                    vertices.add(key['value']['vertexB'])
+
+            vertices = sorted(list(vertices))
+            vertex_index = {vertex: index for index, vertex in enumerate(vertices)}
+            matrix_size = len(vertices)
+            
+            adjacency_matrix = [[None] * matrix_size for _ in range(matrix_size)]
+
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertex_a = key['key']
+                    vertex_b = key['value']['vertexA']
+                    weight = key['value']['weight']
+                    if vertex_a is not None and vertex_b is not None:
+                        index_a = vertex_index[vertex_a]
+                        index_b = vertex_index[vertex_b]
+                        adjacency_matrix[index_a][index_b] = weight
+                        adjacency_matrix[index_b][index_a] = weight
+
+            return adjacency_matrix, vertices
+
+        adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
+
+        # Convert adjacency_matrix and headers to DataFrame
+        df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
+        
+
+
+
+        print(f"\n====================================== Req No. 2 Inputs ======================================\n"
+                f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
+                f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
+                f"====================================== Req No. 2 Results ======================================\n"
+                f"Total de Cámaras Puestas: {total_camaras}\n"
+                f"Identificadores de las Cámaras: {id_vertices}\n"
+                f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
+                f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
+                f"Conecciones entre Cámaras:\n{df}\n"
+                f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
+                f"La memoria usada del requerimiento es: {dm} kB\n"
+                
+        )
+        
+        # Printing adjacency matrix
+        
+
+    except ValueError:
+        print("Please enter valid input for the number of cameras.")
+
     
     # except Exception as exp:
     #     print(f"Error en la ejecución del requerimiento 5: {exp}\n")

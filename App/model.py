@@ -66,8 +66,12 @@ def new_data_structs():
     
     data_structs = {"comparendos": None, # Grafo: peso numéro de comparendos
                     "ditsancias": None, # Grafo: peso distancia
-                    "mapa_vertices": None, # Mapa: {id: vertice}
+                    "mapa_vertices": None, 
+                    
                     "mapa_vehiculos_maxpq_comparendos": None, # Mapa: {llave: vehiculo, valor: max_pq_comparendos}
+                    "mapa_vehiculos": None, # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
+                    
+                    "mapa_gravedad_comparendos": None, #Mapa: {llave: gravedad, valor: lista_comparendos}
                    
                     
         
@@ -84,6 +88,7 @@ def new_data_structs():
     
     data_structs["mapa_vehiculos"] = mp.newMap(numelements=35, maptype="PROBING", loadfactor=0.5)
     
+    data_structs["mapa_gravedad_comparendos"] = om.newMap(omaptype="RBT", cmpfunction=compare_gravedad)
     
     
     return data_structs
@@ -97,8 +102,9 @@ def add_data(data_structs, archivo, data):
     Función para agregar nuevos elementos a la lista
     """
     #TODO: Crear la función para agregar elementos a una lista
-    mapa_vertices = data_structs["mapa_vertices"] # Mapa: {id: vertice}
-    mapa_vehiculos = data_structs["mapa_vehiculos"] # Mapa: {llave: vehiculo, valor: }
+    mapa_vertices = data_structs["mapa_vertices"] # Mapa: {lllaeve: id_vertice, valor: vertice}
+    mapa_vehiculos = data_structs["mapa_vehiculos"] # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
+    mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] # Mapa: {llave: gravedad, valor: lista_comparendos}
     
     
     match archivo:
@@ -135,6 +141,8 @@ def add_data(data_structs, archivo, data):
                 
             
         case 'comparendos_2019_bogota_vertices.csv':
+            
+        # ================================================ Carga Normal ================================================ #    
                       
             id_vertice_mas_cercano = data["VERTICES"]
             if mp.contains(mapa_vertices, id_vertice_mas_cercano):
@@ -142,27 +150,52 @@ def add_data(data_structs, archivo, data):
                 vertice = me.getValue(entrada_vertice)
                 lt.addLast(vertice["comparendos"], data)
             
+        # ============================================ Carga Mapa Vehiculos ============================================ #     
                 
-            if mp.contains(mapa_vehiculos, data["CLASE_VEHICULO"]):
-                entrada_vehiculo = mp.get(mapa_vehiculos, data["CLASE_VEHICULO"])
-                mapa_vertices_vehiculo = me.getValue(entrada_vehiculo)
+            if mp.contains(mapa_vehiculos, data["CLASE_VEHICULO"]): # Si el mapa de vehiculos contiene el vehiculo
+                entrada_vehiculo = mp.get(mapa_vehiculos, data["CLASE_VEHICULO"]) # Se obtiene la pareja {llave: vehiculo, valor: mapa_vertices_vehiculo}
+                mapa_vertices_vehiculo = me.getValue(entrada_vehiculo) # Se obtiene el mapa de vertices del vehiculo
                 
-                if mp.contains(mapa_vertices_vehiculo, id_vertice_mas_cercano):
-                    entrada_lista_comparendos = mp.get(mapa_vertices_vehiculo, id_vertice_mas_cercano)
+                if mp.contains(mapa_vertices_vehiculo, id_vertice_mas_cercano): # Si el mapa de vertices del vehiculo contiene el vertice más cercano
+                    entrada_lista_comparendos = mp.get(mapa_vertices_vehiculo, id_vertice_mas_cercano) # Se obtiene la pareja {llave: id_vertice_mas_cercano, valor: lista_comparendos}
+                    lista_comparendos = me.getValue(entrada_lista_comparendos) # Se obtiene la lista de comparendos del vertice más cercano
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos del vertice más cercano
+                
+                else: # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
+                    lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                    mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
+            
+            else: # Si el mapa de vehiculos no contiene el vehiculo
+                mapa_vertices_vehiculo = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5) # Se crea un mapa de vertices del vehiculo
+                lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
+                mp.put(mapa_vehiculos, data["CLASE_VEHICULO"], mapa_vertices_vehiculo) # Se agrega el mapa de vertices del vehiculo al mapa de vehiculos
+                
+        # ============================================ Carga Mapa Gravedad ============================================ #
+        
+            if om.contains(mapa_gravedad_comparendos, data["INFRACCION"]): # Si el mapa de gravedad contiene la gravedad
+                entrada_gravedad = om.get(mapa_gravedad_comparendos, data["INFRACCION"])
+                mapa_vertices_gravedad = me.getValue(entrada_gravedad)
+                
+                if mp.contains(mapa_vertices_gravedad, id_vertice_mas_cercano):
+                    entrada_lista_comparendos = mp.get(mapa_vertices_gravedad, id_vertice_mas_cercano)
                     lista_comparendos = me.getValue(entrada_lista_comparendos)
                     lt.addLast(lista_comparendos, data)
+                    
                 else:
                     lista_comparendos = lt.newList("ARRAY_LIST")
                     lt.addLast(lista_comparendos, data)
-                    mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos)
-            
-            else:
-                mapa_vertices_vehiculo = mp.newMap(numelements=100000, maptype="PROBING", loadfactor=0.5)
+                    mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos)
+                
+            else: # Si el mapa de gravedad no contiene la gravedad
+                mapa_vertices_gravedad = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5)
                 lista_comparendos = lt.newList("ARRAY_LIST")
                 lt.addLast(lista_comparendos, data)
-                mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos)    
-                mp.put(mapa_vehiculos, data["CLASE_VEHICULO"], mapa_vertices_vehiculo)
-
+                mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos)
+                om.put(mapa_gravedad_comparendos, data["INFRACCION"], mapa_vertices_gravedad)
+                
                 
                         
         case "bogota_arcos.txt":
@@ -229,7 +262,34 @@ def min_pq_vehiculo_comparendos(data_structs):
                 mp.put(mapa_vehiculos_maxpq_comparendos, llave_vehiculo, max_pq_comparendos) # Se agrega el max_pq de comparendos al mapa de vehiculos con max_pq de comparendos
 
           
+def min_pq_gravedad_comparendos(data_structs):
+    mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] 
+    mapa_gravedad_maxpq_comparendos = data_structs["mapa_gravedad_maxpq_comparendos"]
     
+    llaves_gravedad = om.keySet(mapa_gravedad_comparendos) # Se obtienen las llaves del mapa de gravedad
+    for llave_gravedad in lt.iterator(llaves_gravedad): # Para cada gravedad en el mapa de gravedad
+        entrada_mapa_gravedad = om.get(mapa_gravedad_comparendos, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: mapa de vertices de la gravedad}
+        mapa_vertices_gravedad = me.getValue(entrada_mapa_gravedad) # Se obtiene el mapa de vertices de la gravedad
+        
+        llaves_vertices_gravedad = mp.keySet(mapa_vertices_gravedad) # Se obtienen las llaves del mapa de vertices de la gravedad
+        for llave_vertice in lt.iterator(llaves_vertices_gravedad): # Para cada vertice en el mapa de vertices de la gravedad
+            entrada_mapa_vertices_gravedad = mp.get(mapa_vertices_gravedad, llave_vertice) # Se obtiene la pareja {llave: vertice, valor: lista_comparendos}
+            lista_comparendos = me.getValue(entrada_mapa_vertices_gravedad) # Se obtiene la lista de comparendos del vertice
+            
+            for comparendo in lt.iterator(lista_comparendos): # Para cada comparendo en la lista de comparendos del vertice
+                gravedad = comparendo["INFRACCION"] # Se obtiene la gravedad del comparendo
+                orden_gravedad = get_orden_gravedad(gravedad) # Se obtiene el orden de la gravedad
+                
+                if mp.contains(mapa_gravedad_maxpq_comparendos, gravedad): # Si el mapa de gravedad con max_pq de comparendos contiene la gravedad  
+                    entrada_mapa_gravedad_maxpq_comparendos = mp.get(mapa_gravedad_maxpq_comparendos, gravedad) # Se obtiene la pareja {llave: gravedad, valor: max_pq_comparendos}
+                    max_pq_comparendos = me.getValue(entrada_mapa_gravedad_maxpq_comparendos) # Se obtiene la max_pq de comparendos de la gravedad
+                    
+                    impq.insert(max_pq_comparendos, llave_vertice, orden_gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
+                    
+                else: # Si el mapa de gravedad con max_pq de comparendos no contiene la gravedad
+                    max_pq_comparendos = impq.newIndexMinPQ(cmpfunction=compare_gravedad_pq)
+                    impq.insert(max_pq_comparendos, llave_vertice, orden_gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
+                    mp.put(mapa_gravedad_maxpq_comparendos, gravedad, max_pq_comparendos) # Se agrega el max_pq de comparendos al mapa de gravedad con max_pq de comparendos
                 
         
 
@@ -264,12 +324,19 @@ def new_reduced_data(vertice):
 
 
 
-def get_data(data_structs, id):
+def get_orden_gravedad(codigo_gravedad):
     """
     Retorna un dato a partir de su ID
     """
     #TODO: Crear la función para obtener un dato de una lista
-    pass
+    orden_gravedad = []
+    if codigo_gravedad == "F":
+        codigo_gravedad = "F00"
+    for caracter in codigo_gravedad:
+        orden_gravedad.append(-ord(caracter))
+        
+    return orden_gravedad
+        
 
 
 def data_size(data_structs):
@@ -355,14 +422,11 @@ def req_5(data_structs, n_camaras, clase_vehiculo):
            
     origen = lt.firstElement(vertices_llaves) # Se obtiene el primer vertice de la lista de vertices del subgrafo    
     mst = prim.PrimMST(sub_grafo, origin=origen) # Se obtiene el MST del subgrafo
-    mst_grafo = prim.prim(sub_grafo, mst, origen) # Se obtiene el MST del subgrafo
+    mst_grafo = prim.prim(sub_grafo, mst, origen) # Se obtiene el grafo con los arcos del recorrdio del MST
     total_camaras = lt.size(vertices_llaves) 
     id_vertices = vertices_llaves 
-    arcos =  gr.edges(mst_grafo) # Se obtienen los arcos del MST
-    
-    extension = 0
-    for arco in lt.iterator(arcos):
-        extension += arco
+    arcos = prim.edgesMST(sub_grafo, mst) # Se obtienen los arcos del MST
+    extension =  prim.weightMST(sub_grafo, mst) # Se obtienen los arcos del MST
     
     costo = extension * 1000000
     
@@ -384,12 +448,36 @@ def req_5(data_structs, n_camaras, clase_vehiculo):
     
 
 
-def req_6(data_structs):
+def req_6(data_structs, num_comparendos_graves):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
+    mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"]
+    mapa_vertices = data_structs["mapa_vertices"]
+    
+    llaves_mapa_gravedad = om.keySet(mapa_gravedad_comparendos) # Se obtienen las llaves del mapa de gravedad
+    mapa_vertice_cercano_comparendo_grave = mp.newMap(numelements=100000, maptype="PROBING", loadfactor=0.5) # Mapa: {llave: id_vertice, valor: vertice}
+    valores_mapa_gravedad = 0
+    
+    i = 1
+    while i < num_comparendos_graves:
+        for gravedad in lt.iterator(llaves_mapa_gravedad): # Para cada gravedad en el mapa de gravedad
+            entrada_gravedad_comparendos = mp.get(mapa_gravedad_comparendos, gravedad) # Se obtiene la pareja {llave: gravedad, valor: lista_comparendos}
+            lista_comparendos = me.getValue(entrada_gravedad_comparendos) # Se obtiene la lista de comparendos de la gravedad
+            
+            if lt.size(lista_comparendos) >= i: # Si la lista de comparendos de la gravedad tiene más de i comparendos
+                comparendo = lt.getElement(lista_comparendos, i) # Se obtiene el comparendo en la posición i de la lista de comparendos de la gravedad
+                vertice_mas_cercano = comparendo["VERTICES"] # Se obtiene el id del vertice más cercano al comparendo
+                    
+                    
+                
+                
+        
+    
+    
+  
+        
 
 
 def req_7(data_structs):
@@ -424,8 +512,41 @@ def compare_num_comparendos(data_1, data_2):
         return -1
     else:
         return 0
+ 
+def compare_gravedad(data_1, data_2):
+    """
+    Función encargada de comparar dos datos
+    """
+    data_1 = get_orden_gravedad(data_1)
+    data_2 =  get_orden_gravedad(data_2)
+    
+    if data_1 > data_2:
+        return 1
+    elif data_1 < data_2:
+        return -1
+    else:
+        return 0
+    
+   
+def compare_gravedad_pq(data_1, data_2):
+    """
+    Función encargada de comparar dos datos
+    """
+    data_1 = int(data_1)
+    data_2 =  int(data_2['key'])
+
+    if data_1 > data_2:
+        return 1
+    elif data_1 < data_2:
+        return -1
+    else:
+        return 0
 
 # Funciones de ordenamiento
+
+
+    
+    
 
 
 def sort_criteria(data_1, data_2):
