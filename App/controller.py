@@ -66,6 +66,7 @@ def load_data(data_structs):
     for comparendo in comparendos:
         model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
     model.min_pq_vehiculo_comparendos(data_structs)
+    model.min_pq_gravedad_comparendos(data_structs)
 
     arcos_archivo = cf.data_dir + 'bogota_arcos.txt'
     with open(arcos_archivo, 'r') as f:

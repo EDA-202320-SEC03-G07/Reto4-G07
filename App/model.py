@@ -71,6 +71,7 @@ def new_data_structs():
                     "mapa_vehiculos_maxpq_comparendos": None, # Mapa: {llave: vehiculo, valor: max_pq_comparendos}
                     "mapa_vehiculos": None, # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
                     
+                    "mapa_gravedad_maxpq_comparendos": None, # Mapa: {llave: gravedad, valor: max_pq_comparendos}
                     "mapa_gravedad_comparendos": None, #Mapa: {llave: gravedad, valor: lista_comparendos}
                    
                     
@@ -89,6 +90,8 @@ def new_data_structs():
     data_structs["mapa_vehiculos"] = mp.newMap(numelements=35, maptype="PROBING", loadfactor=0.5)
     
     data_structs["mapa_gravedad_comparendos"] = om.newMap(omaptype="RBT", cmpfunction=compare_gravedad)
+    
+    data_structs["mapa_gravedad_maxpq_comparendos"] = mp.newMap(numelements=115, maptype="PROBING", loadfactor=0.5)
     
     
     return data_structs
