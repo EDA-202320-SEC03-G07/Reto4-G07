@@ -236,8 +236,32 @@ def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 6
     
+    
+    consulta_comparendos = int(input("Ingrese el número de comparendos a responder: "))
+    lista, dt, dm = controller.req_6(control, consulta_comparendos)
+    
+    print(f"\n====================================== Req No. 6 Inputs ======================================\n"
+            f"Número de Comparendos a Responder: {consulta_comparendos}\n"
+            f"====================================== Req No. 6 Results ======================================\n"
+            f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
+            f"La memoria usada del requerimiento es: {dm} kB\n"
+            )
+    
+    for info in lt.iterator(lista):
+        print(f"ID del vértice más cercano al comparendo: {info['id_vertice_cercano_comparendo']}\n"
+              f"Gravedad del comparendo: {info['gravedad_comparendo']}\n"
+              f"Estación de policía más cercana: {info['estacion_ma_cercana']}\n"
+              f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia_al_vertice'], 2)} km\n")
+        for arco in info['path']:
+            camino = st.pop(arco)
+            print(camino)
+            
+            
+        
+        
+
+        
 
 
 def print_req_7(control):

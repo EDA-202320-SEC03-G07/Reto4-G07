@@ -148,19 +148,28 @@ def req_5(control, consulta_camaras, consulta_clase_vehiculo):
     t1 = get_time()
     m1 = get_memory()
     
-
     dt = delta_time(t0,t1)
     dm = abs(delta_memory(m0,m1))
     return total_camaras, id_vertices, arcos, extension, costo, dt, dm
     # except Exception as exp:
     #     return None, None, None, None, None, None, None
 
-def req_6(control):
+def req_6(control, num_comparendos_graves):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
-    pass
+    t0 = get_time()
+    m0 = get_memory()
+    lista = model.req_6(control, num_comparendos_graves)
+    t1 = get_time()
+    m1 = get_memory()
+    
+    dt = delta_time(t0,t1)
+    dm = abs(delta_memory(m0,m1))
+    
+    return lista, dt, dm
+    
 
 
 def req_7(control):
