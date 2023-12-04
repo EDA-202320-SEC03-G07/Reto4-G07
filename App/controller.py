@@ -98,12 +98,23 @@ def get_data(control, id):
     pass
 
 
-def req_1(control):
+def req_1(control, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino):
     """
     Retorna el resultado del requerimiento 1
     """
     # TODO: Modificar el requerimiento 1
-    pass
+    
+    dt1 = get_time()
+    dm1 = get_memory()
+    
+    total_vertices, total_distancia, pathTo = model.req_1(control, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino)
+    
+    dt2 = get_time()
+    dm2 = get_memory()
+    dt = delta_time(dt1,dt2)
+    dm = abs(delta_memory(dm1,dm2))
+    
+    return total_vertices, total_distancia, pathTo, dt, dm
 
 
 def req_2(control):
