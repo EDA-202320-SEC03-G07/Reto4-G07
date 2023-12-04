@@ -177,9 +177,9 @@ def add_data(data_structs, archivo, data):
                 mp.put(mapa_vehiculos, data["CLASE_VEHICULO"], mapa_vertices_vehiculo) # Se agrega el mapa de vertices del vehiculo al mapa de vehiculos
                 
         # ============================================ Carga Mapa Gravedad ============================================ #
-        
-            if om.contains(mapa_gravedad_comparendos, data["INFRACCION"]): # Si el mapa de gravedad contiene la gravedad
-                entrada_gravedad = om.get(mapa_gravedad_comparendos, data["INFRACCION"])
+            servicio_infraccion = " ".join([data["TIPO_SERVICIO"], data["INFRACCION"]])
+            if om.contains(mapa_gravedad_comparendos, servicio_infraccion): # Si el mapa de gravedad contiene la gravedad
+                entrada_gravedad = om.get(mapa_gravedad_comparendos, servicio_infraccion)
                 mapa_vertices_gravedad = me.getValue(entrada_gravedad)
                 
                 if mp.contains(mapa_vertices_gravedad, id_vertice_mas_cercano):
@@ -197,7 +197,7 @@ def add_data(data_structs, archivo, data):
                 lista_comparendos = lt.newList("ARRAY_LIST")
                 lt.addLast(lista_comparendos, data)
                 mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos)
-                om.put(mapa_gravedad_comparendos, data["INFRACCION"], mapa_vertices_gravedad)
+                om.put(mapa_gravedad_comparendos, servicio_infraccion, mapa_vertices_gravedad)
                 
                 
                         
@@ -280,7 +280,7 @@ def min_pq_gravedad_comparendos(data_structs):
             lista_comparendos = me.getValue(entrada_mapa_vertices_gravedad) # Se obtiene la lista de comparendos del vertice
             
             for comparendo in lt.iterator(lista_comparendos): # Para cada comparendo en la lista de comparendos del vertice
-                gravedad = comparendo["INFRACCION"] # Se obtiene la gravedad del comparendo
+                gravedad = " ".join([comparendo["TIPO_SERVICIO"], comparendo["INFRACCION"]]) # Se obtiene la gravedad del comparendo
                 orden_gravedad = get_orden_gravedad(gravedad) # Se obtiene el orden de la gravedad
                 
                 if mp.contains(mapa_gravedad_maxpq_comparendos, gravedad): # Si el mapa de gravedad con max_pq de comparendos contiene la gravedad  
@@ -331,13 +331,30 @@ def get_orden_gravedad(codigo_gravedad):
     """
     Retorna un dato a partir de su ID
     """
-    #TODO: Crear la función para obtener un dato de una lista
+    
     orden_gravedad = []
-    if codigo_gravedad == "F":
-        codigo_gravedad = "F00"
-    for caracter in codigo_gravedad:
-        orden_gravedad.append(-ord(caracter))
+    
+    codigo_gravedad = codigo_gravedad.split(" ")
+    if codigo_gravedad[0] == "Particular":
+        valor_1 = -1
+    elif codigo_gravedad[0] == "Oficial":
+        valor_1 = -2
+    elif codigo_gravedad[0] == "Público":    
+        valor_1 = -3
+    else:
+        valor_1 = 0
+    orden_gravedad.append(valor_1)
+    
+    
+    if codigo_gravedad[1] == "F":
+        codigo_gravedad[1] = "F00"
         
+    for caracter in codigo_gravedad[1]:
+        valor_2 = []
+        valor_2.append(-ord(caracter))
+        
+    orden_gravedad.append(valor_2)
+    
     return orden_gravedad
         
 
@@ -535,8 +552,8 @@ def compare_gravedad_pq(data_1, data_2):
     """
     Función encargada de comparar dos datos
     """
-    data_1 = int(data_1)
-    data_2 =  int(data_2['key'])
+    data_1 = (data_1)
+    data_2 = (data_2['key'])
 
     if data_1 > data_2:
         return 1
