@@ -73,7 +73,8 @@ def new_data_structs():
                     
                     "mapa_gravedad_maxpq_comparendos": None, # Mapa: {llave: gravedad, valor: max_pq_comparendos}
                     "mapa_gravedad_comparendos": None, #Mapa: {llave: gravedad, valor: lista_comparendos}
-                   
+                    
+                    "mapa_localidades": None, # Mapa: {llave: localidad, valor: lista_comparendos}
                     
         
                     }
@@ -93,6 +94,9 @@ def new_data_structs():
     
     data_structs["mapa_gravedad_maxpq_comparendos"] = mp.newMap(numelements=115, maptype="PROBING", loadfactor=0.5)
     
+    data_structs["mapa_localidades"] = mp.newMap(numelements=20, maptype="PROBING", loadfactor=0.5)
+    
+    data_structs["mapa_localidades_maxpq_comparendos"] = mp.newMap(numelements=20, maptype="PROBING", loadfactor=0.5)
     
     return data_structs
     
@@ -108,7 +112,7 @@ def add_data(data_structs, archivo, data):
     mapa_vertices = data_structs["mapa_vertices"] # Mapa: {lllaeve: id_vertice, valor: vertice}
     mapa_vehiculos = data_structs["mapa_vehiculos"] # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
     mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] # Mapa: {llave: gravedad, valor: lista_comparendos}
-    
+    mapa_localidades = data_structs["mapa_localidades"] # Mapa: {llave: localidad, valor: lista_comparendos}
     
     match archivo:
         case "bogota_vertices.txt": # Se agrega un vertice al mapa de vertices
@@ -146,13 +150,37 @@ def add_data(data_structs, archivo, data):
         case 'comparendos_2019_bogota_vertices.csv':
             
         # ================================================ Carga Normal ================================================ #    
-                      
+            
             id_vertice_mas_cercano = data["VERTICES"]
             if mp.contains(mapa_vertices, id_vertice_mas_cercano):
                 entrada_vertice =  mp.get(mapa_vertices, id_vertice_mas_cercano)
                 vertice = me.getValue(entrada_vertice)
                 lt.addLast(vertice["comparendos"], data)
             
+        # ================================================ Carga Mapa Localidades ================================================ #
+            if mp.contains(mapa_localidades, data["LOCALIDAD"]): # Si el mapa de vehiculos contiene el vehiculo
+                entrada_localidad = mp.get(mapa_localidades, data["LOCALIDAD"]) # Se obtiene la pareja {llave: vehiculo, valor: mapa_vertices_vehiculo}
+                mapa_vertices_localidad = me.getValue(entrada_localidad) # Se obtiene el mapa de vertices del vehiculo
+                
+                if mp.contains(mapa_vertices_localidad, id_vertice_mas_cercano): # Si el mapa de vertices del vehiculo contiene el vertice más cercano
+                    entrada_lista_comparendos = mp.get(mapa_vertices_localidad, id_vertice_mas_cercano) # Se obtiene la pareja {llave: id_vertice_mas_cercano, valor: lista_comparendos}
+                    lista_comparendos = me.getValue(entrada_lista_comparendos) # Se obtiene la lista de comparendos del vertice más cercano
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos del vertice más cercano
+                
+                else: # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
+                    lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                    mp.put(mapa_vertices_localidad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
+            
+            else: # Si el mapa de vehiculos no contiene el vehiculo
+                mapa_vertices_localidad = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5) # Se crea un mapa de vertices del vehiculo
+                lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                mp.put(mapa_vertices_localidad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
+                mp.put(mapa_localidades, data["LOCALIDAD"], mapa_vertices_localidad) # Se agrega el mapa de vertices del vehiculo al mapa de vehiculos
+                
+                
+
         # ============================================ Carga Mapa Vehiculos ============================================ #     
                 
             if mp.contains(mapa_vehiculos, data["CLASE_VEHICULO"]): # Si el mapa de vehiculos contiene el vehiculo
@@ -236,7 +264,33 @@ def add_data(data_structs, archivo, data):
                 
                 gr.addEdge(data_structs["comparendos"], id_origen, id_destino, peso_comparendos) # Se agrega el arco al grafo de comparendos
             
+    
+    
+def min_pq_localidades_comparendos(data_structs):
+    mapa_localidades = data_structs["mapa_localidades"]
+    mapa_localidades_max_pq = data_structs["mapa_localidades_maxpq_comparendos"]
+    
+    llaves_localidades = mp.keySet(mapa_localidades) # Se obtienen las llaves de mapa de vehiculos
+    for llave_localidad in lt.iterator(llaves_localidades): # Para cada vehiculo en el mapa de vehiculos
+        entrada_mapa_localidades = mp.get(mapa_localidades, llave_localidad) # Se obtiene la pareja {llave: vehiculo, valor: mapa de vertices del vehiculo}
+        mapa_vertices_localidad = me.getValue(entrada_mapa_localidades) # Se obtiene el mapa de vertices del vehiculo
+
+        llaves_vertices_localidad = mp.keySet(mapa_vertices_localidad) # Se obtienen las llaves del mapa de vertices del vehiculo
+        for llave_vertice in lt.iterator(llaves_vertices_localidad): # Para cada vertice en el mapa de vertices del vehiculo
+            entrada_mapa_vertices_localidad = mp.get(mapa_vertices_localidad, llave_vertice) # Se obtiene la pareja {llave: vertice, valor: lista_comparendos}
+            lista_comparendos = me.getValue(entrada_mapa_vertices_localidad) # Se obtiene la lista de comparendos del vertice
+            num_comparendos = lt.size(lista_comparendos) # Se obtiene el número de comparendos del vertice
+        
+            if mp.contains(mapa_localidades_max_pq, llave_localidad): # Si el mapa de vehiculos con max_pq de comparendos contiene el vehiculo  
+                entrada_mapa_localidades_maxpq_comparendos = mp.get(mapa_localidades_max_pq, llave_localidad) # Se obtiene la pareja {llave: vehiculo, valor: max_pq_comparendos}
+                max_pq_comparendos = me.getValue(entrada_mapa_localidades_maxpq_comparendos) # Se obtiene la max_pq de comparendos del vehiculo
+                
+                impq.insert(max_pq_comparendos, llave_vertice, -num_comparendos) # Se agrega el vertice a la max_pq de comparendos del vehiculo
             
+            else: # Si el mapa de vehiculos con max_pq de comparendos no contiene el vehiculo
+                max_pq_comparendos = impq.newIndexMinPQ(cmpfunction=compare_num_comparendos) # Se crea una max_pq de comparendos
+                impq.insert(max_pq_comparendos, llave_vertice, -num_comparendos) # Se agrega el vertice a la max_pq de comparendos del vehiculo
+                mp.put(mapa_localidades_max_pq, llave_localidad, max_pq_comparendos) # Se agrega el max_pq de comparendos al mapa de vehiculos con max_pq de comparendos      
 
 def min_pq_vehiculo_comparendos(data_structs):
     mapa_vehiculos = data_structs["mapa_vehiculos"]
@@ -350,14 +404,27 @@ def data_size(data_structs):
     pass
 
 
-def req_1(data_structs):
+def req_1(data_structs, punto_origen, punto_destino):
     """
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
-    pass
-
-
+    
+    vertice_origen = mp.get(data_structs["mapa_vertices"], punto_origen)
+    vertice_destino = mp.get(data_structs["mapa_vertices"], punto_destino)
+    
+    if vertice_origen is None or vertice_destino is None:
+        return None, None, None, None, None
+    
+    id_vertice_origen = me.getKey(vertice_origen)
+    id_vertice_destino = me.getKey(vertice_destino)
+    
+    grafo_distancias = data_structs["distancias"]
+    
+    camino = dfs.DepthFirstSearch(grafo_distancias, id_vertice_origen)
+    
+    respuesta = dfs.pathTo(camino, id_vertice_destino)
+    
 def req_2(data_structs):
     """
     Función que soluciona el requerimiento 2
@@ -366,12 +433,60 @@ def req_2(data_structs):
     pass
 
 
-def req_3(data_structs):
+def req_3(data_structs, n_camaras, localidad):
     """
     Función que soluciona el requerimiento 3
     """
     # TODO: Realizar el requerimiento 3
-    pass
+    
+    mapa_localidades_maxpq_comparendos = data_structs["mapa_localidades_maxpq_comparendos"]
+    mapa_vertices = data_structs["mapa_vertices"]
+    
+    entrada_mapa_localidad = mp.get(mapa_localidades_maxpq_comparendos, localidad)
+    max_pq_comparendos = me.getValue(entrada_mapa_localidad)
+    
+    sub_grafo = gr.newGraph(datastructure="ADJ_LIST", directed=False)
+    sub_mapa = mp.newMap(numelements=120000, maptype="PROBING", loadfactor=0.5)
+    
+    for i in range(n_camaras): # Para cada camara solicitada
+        id_vertice = impq.min(max_pq_comparendos) # Se obtiene el id del vertice con mayor número de comparendos
+        impq.delMin(max_pq_comparendos) # Se elimina el vertice con mayor número de comparendos de la max_pq de comparendos
+        entrada_mapa_vertices = mp.get(mapa_vertices, id_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+        vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
+        
+        vertice_grafo = new_reduced_data(vertice) # Se crea un vertice con la información del vertice pertinente
+        mp.put(sub_mapa, id_vertice, vertice_grafo) # Se agrega el vertice al mapa de vertices del subgrafo
+        gr.insertVertex(sub_grafo, vertice_grafo["id"]) # Se agrega el vertice al subgrafo
+    i = 0    
+    vertices_llaves = mp.keySet(sub_mapa) # Se obtienen las llaves del mapa de vertices del subgrafo
+    for llave_vertice in lt.iterator(vertices_llaves): # Para cada vertice en el mapa de vertices del subgrafo
+        entrada_mapa_vertices = mp.get(sub_mapa, llave_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+        vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
+        size = lt.size(vertices_llaves) # Se obtiene el tamaño de la lista de vertices del subgrafo
+        
+        posicion_vertice = lt.isPresent(vertices_llaves, llave_vertice) # Se obtiene la posición del vertice en la lista de vertices del subgrafo
+        if posicion_vertice != 0: # Si el vertice está en la lista de vertices del subgrafo
+            demas_vertices = lt.subList(vertices_llaves, posicion_vertice, size+i) # Se obtienen los vertices restantes en la lista de vertices del subgrafo
+            
+        for llave_demas_vertice in lt.iterator(demas_vertices):
+            entrada_llave_demas_vertice = mp.get(sub_mapa, llave_demas_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+            llave_demas_vertice = me.getValue(entrada_llave_demas_vertice) # Se obtiene el vertice
+            distancia = haversine(vertice["lat"], vertice["long"], llave_demas_vertice["lat"], llave_demas_vertice["long"]) # Se calcula la distancia entre el vertice y los demás vertices del subgrafo
+            gr.addEdge(sub_grafo, vertice["id"], llave_demas_vertice["id"], distancia) # Se agregan los arcos entre el vertice y los demás vertices del subgrafo
+        i -= 1 
+           
+    origen = lt.firstElement(vertices_llaves) # Se obtiene el primer vertice de la lista de vertices del subgrafo    
+    mst = prim.PrimMST(sub_grafo, origin=origen) # Se obtiene el MST del subgrafo
+    mst_grafo = prim.prim(sub_grafo, mst, origen) # Se obtiene el grafo con los arcos del recorrdio del MST
+    total_camaras = lt.size(vertices_llaves) 
+    id_vertices = vertices_llaves 
+    arcos = prim.edgesMST(sub_grafo, mst) # Se obtienen los arcos del MST
+    extension =  prim.weightMST(sub_grafo, mst) # Se obtienen los arcos del MST
+    
+    costo = extension * 1000000
+    
+    return total_camaras, id_vertices, arcos, extension, costo
+
 
 
 def req_4(data_structs):

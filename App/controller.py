@@ -65,6 +65,7 @@ def load_data(data_structs):
     comparendos = csv.DictReader(f)
     for comparendo in comparendos:
         model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
+    model.min_pq_localidades_comparendos(data_structs)
     model.min_pq_vehiculo_comparendos(data_structs)
     model.min_pq_gravedad_comparendos(data_structs)
 
@@ -113,13 +114,20 @@ def req_2(control):
     pass
 
 
-def req_3(control):
+def req_3(control, consulta_camaras, consulta_localidad):
     """
     Retorna el resultado del requerimiento 3
     """
     # TODO: Modificar el requerimiento 3
-    pass
-
+    
+    dt1 = get_time()
+    dm1 = get_memory()
+    total_camaras, id_vertices, arcos, extension, costo = model.req_3(control, consulta_camaras, consulta_localidad)
+    dt2 = get_time()
+    dm2 = get_memory()
+    dt = delta_time(dt1,dt2)
+    dm = abs(delta_memory(dm1,dm2))
+    return total_camaras, id_vertices, arcos, extension, costo, dt, dm
 
 def req_4(control):
     """
