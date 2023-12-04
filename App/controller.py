@@ -24,7 +24,6 @@ import config as cf
 import model
 import time
 import tracemalloc
-import json
 import csv
 
 """
@@ -46,12 +45,6 @@ def load_data(data_structs):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
-    
-    
-   
-
-    
     
     vertices_archivo = cf.data_dir + 'bogota_vertices.txt'
     with open(vertices_archivo, 'r') as f:
@@ -72,7 +65,7 @@ def load_data(data_structs):
     comparendos = csv.DictReader(f)
     for comparendo in comparendos:
         model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
-     
+    model.min_pq_vehiculo_comparendos(data_structs)
 
     arcos_archivo = cf.data_dir + 'bogota_arcos.txt'
     with open(arcos_archivo, 'r') as f:
@@ -135,12 +128,23 @@ def req_4(control):
     pass
 
 
-def req_5(control):
+def req_5(control, consulta_camaras, consulta_clase_vehiculo):
     """
     Retorna el resultado del requerimiento 5
     """
-    # TODO: Modificar el requerimiento 5
-    pass
+    # try:
+    t0 = get_time()
+    m0 = get_memory()
+    total_camaras, id_vertices, arcos, extension, costo = model.req_5(control, consulta_camaras, consulta_clase_vehiculo)
+    t1 = get_time()
+    m1 = get_memory()
+    
+
+    dt = delta_time(t0,t1)
+    dm = abs(delta_memory(m0,m1))
+    return total_camaras, id_vertices, arcos, extension, costo, dt, dm
+    # except Exception as exp:
+    #     return None, None, None, None, None, None, None
 
 def req_6(control):
     """
@@ -180,12 +184,13 @@ def delta_time(start, end):
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return elapsed
+    return round(elapsed,2)
 
 def get_memory():
     """
     toma una muestra de la memoria alocada en instante de tiempo
     """
+    tracemalloc.start()
     return tracemalloc.take_snapshot()
 
 

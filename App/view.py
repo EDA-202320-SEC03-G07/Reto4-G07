@@ -113,8 +113,25 @@ def print_req_5(control):
     """
         Función que imprime la solución del Requerimiento 5 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    # try: 
+    consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
+    consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
+    
+    total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
+    print(f"\n====================================== Req No. 2 Inputs ======================================\n"
+            f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
+            f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
+            f"====================================== Req No. 2 Results ======================================\n"
+            f"Total de Cámaras Puestas: {total_camaras}\n"
+            f"Identificadores de las Cámaras: {id_vertices}\n"
+            f"Conecciones entre Cámaras: {arcos}\n"
+            f"Extensión de la Red de Cámaras: {extension}\n"
+            f"Costo de la Red de Cámaras: {costo}\n"
+            f"El tiempo de ejecución del requerimiento es: {dt} m/s\n"
+            f"La memoria usada del requerimiento es: {dm} kB\n")
+    
+    # except Exception as exp:
+    #     print(f"Error en la ejecución del requerimiento 5: {exp}\n")
 
 
 def print_req_6(control):
