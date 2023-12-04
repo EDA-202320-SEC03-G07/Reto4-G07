@@ -32,6 +32,7 @@ assert cf
 from tabulate import tabulate
 import traceback
 import pandas as pd
+import threading
 
 """
 La vista se encarga de la interacción con el usuario
@@ -83,8 +84,31 @@ def print_req_1(control):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    pass
-
+    
+    latitud_vertice_origen = float(input("Ingrese la latitud del vertice origen: "))
+    longitud_vertice_origen = float(input("Ingrese la longitud del vertice origen: "))
+    
+    latitud_vertice_destino = float(input("Ingrese la latitud del vertice destino: "))
+    longitud_vertice_destino = float(input("Ingrese la longitud del vertice destino: "))
+    
+    try:
+        total_vertices, total_distancia, pathTo, dt, dm = controller.req_1(control, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino)
+        print(f"\n====================================== Req No. 1 Inputs ======================================\n"
+                f"Latitud del Vertice Origen: {latitud_vertice_origen}\n"
+                f"Longitud del Vertice Origen: {longitud_vertice_origen}\n"
+                f"Latitud del Vertice Destino: {latitud_vertice_destino}\n"
+                f"Longitud del Vertice Destino: {longitud_vertice_destino}\n"
+                f"====================================== Req No. 1 Results ======================================\n"
+                f"Total de Vertices Recorridos: {total_vertices}\n"
+                f"Distancia Total Recorrida: {round(total_distancia, 2)} km\n"
+                f"Camino Recorrido: {pathTo}\n"
+                f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
+                f"La memoria usada del requerimiento es: {dm} kB\n"
+                
+        )
+        
+    except ValueError:
+        print("Porfavor ingresa los vertices correctamente")
 
 def print_req_2(control):
     """
@@ -260,7 +284,7 @@ def print_req_8(control):
 control = new_controller()
 
 # main del reto
-if __name__ == "__main__":
+def thread_cycle():
     """
     Menu principal
     """
@@ -303,3 +327,10 @@ if __name__ == "__main__":
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
+    
+    
+if __name__ == "__main__":
+    threading.stack_size(67108864) # 64MB stack
+    sys.setrecursionlimit(2 ** 20)  # approx 1 million recursions
+    thread = threading.Thread(target=thread_cycle) # instantiate thread object
+    thread.start() # run program at target

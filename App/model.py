@@ -421,27 +421,58 @@ def data_size(data_structs):
     pass
 
 
-def req_1(data_structs, punto_origen, punto_destino):
+def req_1(data_structs, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino):
     """
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
+
+    mapa_vertices = data_structs["mapa_vertices"]
+    distancias = data_structs["distancias"]
     
-    vertice_origen = mp.get(data_structs["mapa_vertices"], punto_origen)
-    vertice_destino = mp.get(data_structs["mapa_vertices"], punto_destino)
+
     
-    if vertice_origen is None or vertice_destino is None:
-        return None, None, None, None, None
+    llaves_mapa_vertices = mp.keySet(mapa_vertices)
+    vertice_mas_cercano_origen = None
+    vertice_mas_cercano_destino = None
+    distancia_minima_origen = float("inf")
+    distancia_minima_destino = float("inf")
     
-    id_vertice_origen = me.getKey(vertice_origen)
-    id_vertice_destino = me.getKey(vertice_destino)
+    for vertice_id in lt.iterator(llaves_mapa_vertices):
+        entrada_vertice = mp.get(mapa_vertices, vertice_id)
+        vertice = me.getValue(entrada_vertice)
+        
+        latitud_vertice = vertice["lat"]
+        longitud_vertice = vertice["long"]
+        
+        distancia_origen = haversine(latitud_vertice_origen, longitud_vertice_origen, latitud_vertice, longitud_vertice)
+        distancia_destino = haversine(latitud_vertice_destino, longitud_vertice_destino, latitud_vertice, longitud_vertice)
+        
+        if distancia_origen < distancia_minima_origen:
+            distancia_minima_origen = distancia_origen
+            vertice_mas_cercano_origen = vertice_id
+            
+        if distancia_destino < distancia_minima_destino:
+            distancia_minima_destino = distancia_destino
+            vertice_mas_cercano_destino = vertice_id
+
+    search = bfs.BreadhtFisrtSearch(distancias, vertice_mas_cercano_origen)
+    pathTo = bfs.pathTo(search, vertice_mas_cercano_destino)
     
-    grafo_distancias = data_structs["distancias"]
+
+    total_vertices = pathTo["size"]
     
-    camino = dfs.DepthFirstSearch(grafo_distancias, id_vertice_origen)
-    
-    respuesta = dfs.pathTo(camino, id_vertice_destino)
-    
+    total_distancia = 0
+    for i in range(total_vertices-1):
+        vertice_id = lt.getElement(pathTo, i)
+        vertice = me.getValue(mp.get(mapa_vertices, vertice_id))
+        vertice_id_siguiente = lt.getElement(pathTo, i+1)
+        vertice_siguiente = me.getValue(mp.get(mapa_vertices, vertice_id_siguiente))
+        
+        distancia = haversine(vertice["lat"], vertice["long"], vertice_siguiente["lat"], vertice_siguiente["long"])
+        total_distancia += distancia
+        
+    return total_vertices, total_distancia, pathTo
 def req_2(data_structs):
     """
     Función que soluciona el requerimiento 2
