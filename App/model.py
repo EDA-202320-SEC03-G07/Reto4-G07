@@ -64,45 +64,44 @@ def new_data_structs():
     """
     #TODO: Inicializar las estructuras de datos
     
-    data_structs = {"comparendos": None, # Grafo: peso numéro de comparendos
-                    "ditsancias": None, # Grafo: peso distancia
-                    "mapa_vertices": None, 
+    data_structs = {"comparendos": None, # Grafo: Peso(Numéro de Comparendos)
+                    "ditsancias": None, # Grafo: Peso(Distancia)
+                    "mapa_vertices": None, # Mapa: {llave: id_vertice, valor: vertice}
                     
-                    "mapa_localidades": None, # Mapa: {llave: localidad, valor: lista_comparendos}
+                    "mapa_localidades": None, # Mapa: {llave: localidad, valor: mapa_vertices_localidad}
                     "mapa_localidades_maxpq_comparendos": None, # Mapa: {llave: localidad, valor: max_pq_comparendos}
                     
-                    "mapa_gravedad_maxpq_comparendos": None, # Mapa: {llave: gravedad, valor: max_pq_comparendos}
                     "mapa_gravedad_comparendos": None, #Mapa: {llave: gravedad, valor: lista_comparendos}
+                    "mapa_gravedad_maxpq_comparendos": None, # Mapa: {llave: gravedad, valor: max_pq_comparendos}
                     
-                    "mapa_vehiculos_maxpq_comparendos": None, # Mapa: {llave: vehiculo, valor: max_pq_comparendos}
                     "mapa_vehiculos": None, # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
+                    "mapa_vehiculos_maxpq_comparendos": None, # Mapa: {llave: vehiculo, valor: max_pq_comparendos}
                 
                     "mapa_estaciones": None, # Mapa: {llave: estacion_nombre, valor: estacion}
                     "grafo_estaciones": None, # Grafo: vertices estaciones
                     "mapa_estaciones_subgrafo": None, # Mapa: {llave: nombre_estacion, valor: subgrafo estacion}
                     
-                    "Estación de Policía Antonio Nariño": None, # Mapa
-                    "Estación de Policía Barrios Unidos": None,
-                    "Estación de Policía Bosa": None,
-                    "Estación de Policía Ciudad Bolívar": None,
-                    "Estación de Policía Engativá": None,
-                    "Estación de Policía Fontibón": None,
-                    "Estación de Policía Kennedy": None,
-                    "Estación de Policía Los Mártires": None,
-                    "Estación de Policía Puente Aranda": None,
-                    "Estación de Policía Suba": None,
-                    "Estación de Policía Teusaquillo": None,
-                    "Estación de Policía Tunjuelito": None,
-                    "Estación de Policía Usaquén": None,
-                    "Estación de Policía Usme": None,
-                    "Estación de Policía La Candelaria": None,
-                    "Estación de Policía Chapinero": None,
-                    "Estación de Policía San Cristóbal": None,
-                    "Estación de Policía Rafael Uribe Uribe": None,
-                    "Estación de Policía Aeropuerto": None,
-                    "Estación de Policía Terminal": None,
-                    "Estación de Policía Santa Fe": None,
-               
+                    "Estación de Policía Antonio Nariño": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Barrios Unidos": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Bosa": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Ciudad Bolívar": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Engativá": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Fontibón": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Kennedy": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Los Mártires": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Puente Aranda": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Suba": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Teusaquillo": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Tunjuelito": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Usaquén": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Usme": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía La Candelaria": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Chapinero": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía San Cristóbal": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Rafael Uribe Uribe": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Aeropuerto": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Terminal": None, # Mapa {llave: id_vertice, valor: vertice}
+                    "Estación de Policía Santa Fe": None,# Mapa {llave: id_vertice, valor: vertice}
                     
                     }
     
@@ -115,7 +114,7 @@ def new_data_structs():
     data_structs["mapa_localidades"] = mp.newMap(numelements=20, maptype="PROBING", loadfactor=0.5)
     data_structs["mapa_localidades_maxpq_comparendos"] = mp.newMap(numelements=20, maptype="PROBING", loadfactor=0.5)
     
-    data_structs["mapa_gravedad_comparendos"] = om.newMap(omaptype="RBT", cmpfunction=compare_gravedad)
+    data_structs["mapa_gravedad_comparendos"] = mp.newMap(numelements=115, maptype="PROBING", loadfactor=0.5)
     data_structs["mapa_gravedad_maxpq_comparendos"] = mp.newMap(numelements=115, maptype="PROBING", loadfactor=0.5)
     
     data_structs["mapa_vehiculos_maxpq_comparendos"] = mp.newMap(numelements=35, maptype="PROBING", loadfactor=0.5)
@@ -159,18 +158,25 @@ def add_data(data_structs, archivo, data):
     """
     Función para agregar nuevos elementos a la lista
     """
-    #TODO: Crear la función para agregar elementos a una lista
-    mapa_vertices = data_structs["mapa_vertices"] # Mapa: {lllaeve: id_vertice, valor: vertice}
-    mapa_vehiculos = data_structs["mapa_vehiculos"] # Mapa: {llave: vehiculo, valor: mapa_vertices_vehiculo}
-    mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] # Mapa: {llave: gravedad, valor: lista_comparendos}
-    mapa_localidades = data_structs["mapa_localidades"] # Mapa: {llave: localidad, valor: lista_comparendos}
-    mapa_estaciones = data_structs["mapa_estaciones"] # Mapa: {llave: id_estacion, valor: vertice}
     
-    grafo_estaciones = data_structs["grafo_estaciones"] # 
+    mapa_vertices = data_structs["mapa_vertices"]
+     
+    mapa_localidades = data_structs["mapa_localidades"]
+    mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] 
+    mapa_vehiculos = data_structs["mapa_vehiculos"] 
+     
+    mapa_estaciones = data_structs["mapa_estaciones"] 
+    grafo_estaciones = data_structs["grafo_estaciones"]  
     mapa_estaciones_subgrafo = data_structs["mapa_estaciones_subgrafo"]
     
+    
     match archivo:
+        
+        
         case "bogota_vertices.txt": # Se agrega un vertice al mapa de vertices
+            
+            # =============== Carga Mapa Vertices, Grafo Peso(Distancia), Grafo Peso(Número de Comparendos) =============== #
+            
             data = data.split(',') # Se formatea la información de string "# # #" a lista ["#", "#", "#"]
             id = data[0] # Se obtiene el identificador del vertice en la primera posición de la lista
             longitud = float(data[1]) # Se obtiene la longitud del vertice en la segunda posición de la lista
@@ -181,7 +187,7 @@ def add_data(data_structs, archivo, data):
             vertice = {"id": id, # Identificador del vertice
                         "long": longitud, # Longitud del vertice
                        "lat": latitud, # Latitud del vertice
-                       "estaciones": lt.newList("ARRAY_LIST"), # Lista de estaciones de policia más cercanas al vertice. Una si es única, varias si hay empate
+                       "estaciones": lt.newList("ARRAY_LIST"), # Lista de estaciones de policia más cercanas al vertice.
                        "comparendos": lt.newList("ARRAY_LIST"), # Lista de comparendos en el vertice
                        }
             
@@ -194,29 +200,28 @@ def add_data(data_structs, archivo, data):
            
         case "estacionpolicia_bogota_vertices.csv":
             
-            vertice_mas_cercano = data["VERTICES"]
-            if mp.contains(mapa_vertices, vertice_mas_cercano):
-                entrada_vertice =  mp.get(mapa_vertices, vertice_mas_cercano)
-                vertice = me.getValue(entrada_vertice)
-                lt.addLast(vertice["estaciones"], data)
+        # ========================================================= Carga Mapa Vertices ========================================================= #
+            
+            vertice_mas_cercano = data["VERTICES"] # Se obtiene el id del vertice más cercano a la estacion de policia
+            if mp.contains(mapa_vertices, vertice_mas_cercano): # Si el mapa de vertices contiene el vertice más cercano
+                entrada_vertice =  mp.get(mapa_vertices, vertice_mas_cercano) # Se obtiene la pareja {llave: vertice_mas_cercano, valor: vertice}
+                vertice = me.getValue(entrada_vertice) # Se obtiene el vertice más cercano
+                lt.addLast(vertice["estaciones"], data) # Se agrega la estacion de policia a la lista de estaciones del vertice más cercano
                 
         # ============================================ Carga Mapa Estaciones ============================================ #
               
             if not mp.contains(mapa_estaciones, data["EPONOMBRE"]): # Si el mapa de estaciones contiene la estacion
-                reduced_data = new_reduced_data_estacion(data)
-                nombre = data["EPONOMBRE"]
-                mp.put(mapa_estaciones, nombre, reduced_data)
+                reduced_data = new_reduced_data_estacion(data) # Se crea un vertice con la información obtenida en formato dict
+                nombre = data["EPONOMBRE"] # Se obtiene el nombre de la estacion de policia
+                mp.put(mapa_estaciones, nombre, reduced_data) # Se agrega la estacion de policia al mapa de estaciones
                   
         # =========================================== Carga Grafo Estaciones =========================================== #     
+            
+            gr.insertVertex(grafo_estaciones, nombre) # Se agrega la estacion de policia al grafo de estaciones
+            subgrafo = gr.newGraph(datastructure="ADJ_LIST", directed=False) # Se crea un subgrafo de estacion de policia
+            mp.put(mapa_estaciones_subgrafo, nombre, subgrafo) # Se agrega el subgrafo de estacion de policia al mapa de subgrafos de estaciones
+            
         
-            
-            gr.insertVertex(grafo_estaciones, nombre)
-            subgrafo = gr.newGraph(datastructure="ADJ_LIST", directed=False)
-            mp.put(mapa_estaciones_subgrafo, nombre, subgrafo)
-            
-            
-            
-            
         case 'comparendos_2019_bogota_vertices.csv':
             
         # ================================================ Carga Normal ================================================ #    
@@ -227,7 +232,7 @@ def add_data(data_structs, archivo, data):
                 vertice = me.getValue(entrada_vertice)
                 lt.addLast(vertice["comparendos"], data)
             
-        # ================================================ Carga Mapa Localidades ================================================ #
+        # ============================================================================ Carga Mapa Localidades ============================================================================ #
             if mp.contains(mapa_localidades, data["LOCALIDAD"]): # Si el mapa de vehiculos contiene el vehiculo
                 entrada_localidad = mp.get(mapa_localidades, data["LOCALIDAD"]) # Se obtiene la pareja {llave: vehiculo, valor: mapa_vertices_vehiculo}
                 mapa_vertices_localidad = me.getValue(entrada_localidad) # Se obtiene el mapa de vertices del vehiculo
@@ -237,21 +242,19 @@ def add_data(data_structs, archivo, data):
                     lista_comparendos = me.getValue(entrada_lista_comparendos) # Se obtiene la lista de comparendos del vertice más cercano
                     lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos del vertice más cercano
                 
-                else: # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
+                elif not mp.contains(mapa_vertices_localidad, id_vertice_mas_cercano): # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
                     lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
                     lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
                     mp.put(mapa_vertices_localidad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
             
-            else: # Si el mapa de vehiculos no contiene el vehiculo
+            elif not mp.contains(mapa_localidades, data["LOCALIDAD"]): # Si el mapa de vehiculos no contiene el vehiculo
                 mapa_vertices_localidad = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5) # Se crea un mapa de vertices del vehiculo
                 lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
                 lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
                 mp.put(mapa_vertices_localidad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
                 mp.put(mapa_localidades, data["LOCALIDAD"], mapa_vertices_localidad) # Se agrega el mapa de vertices del vehiculo al mapa de vehiculos
-                
-                
 
-        # =========================================================================== Carga Mapa Vehiculos =========================================================================== #     
+        # ============================================================================ Carga Mapa Vehiculos ============================================================================ #     
                 
             if mp.contains(mapa_vehiculos, data["CLASE_VEHICULO"]): # Si el mapa de vehiculos contiene el vehiculo
                 entrada_vehiculo = mp.get(mapa_vehiculos, data["CLASE_VEHICULO"]) # Se obtiene la pareja {llave: vehiculo, valor: mapa_vertices_vehiculo}
@@ -262,44 +265,47 @@ def add_data(data_structs, archivo, data):
                     lista_comparendos = me.getValue(entrada_lista_comparendos) # Se obtiene la lista de comparendos del vertice más cercano
                     lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos del vertice más cercano
                 
-                else: # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
+                elif not mp.contains(mapa_vertices_vehiculo, id_vertice_mas_cercano): # Si el mapa de vertices del vehiculo no contiene el vertice más cercano
                     lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
                     lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
                     mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
             
-            else: # Si el mapa de vehiculos no contiene el vehiculo
+            elif not mp.contains(mapa_vehiculos, data["CLASE_VEHICULO"]): # Si el mapa de vehiculos no contiene el vehiculo
                 mapa_vertices_vehiculo = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5) # Se crea un mapa de vertices del vehiculo
                 lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
                 lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
                 mp.put(mapa_vertices_vehiculo, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices del vehiculo
                 mp.put(mapa_vehiculos, data["CLASE_VEHICULO"], mapa_vertices_vehiculo) # Se agrega el mapa de vertices del vehiculo al mapa de vehiculos
                 
-        # =========================================================================== Carga Mapa Gravedad =========================================================================== #
+        # ============================================================================ Carga Mapa Gravedad ============================================================================ #
+            
             servicio_infraccion = " ".join([data["TIPO_SERVICIO"], data["INFRACCION"]])
-            if om.contains(mapa_gravedad_comparendos, servicio_infraccion): # Si el mapa de gravedad contiene la gravedad
-                entrada_gravedad = om.get(mapa_gravedad_comparendos, servicio_infraccion)
-                mapa_vertices_gravedad = me.getValue(entrada_gravedad)
+            if mp.contains(mapa_gravedad_comparendos, servicio_infraccion): # Si el mapa de gravedad contiene la gravedad
+                entrada_gravedad = mp.get(mapa_gravedad_comparendos, servicio_infraccion) # Se obtiene la pareja {llave: servicio_infraccion, valor: mapa_vertices_gravedad}
+                mapa_vertices_gravedad = me.getValue(entrada_gravedad) # Se obtiene el mapa de vertices de la gravedad
                 
-                if mp.contains(mapa_vertices_gravedad, id_vertice_mas_cercano):
-                    entrada_lista_comparendos = mp.get(mapa_vertices_gravedad, id_vertice_mas_cercano)
-                    lista_comparendos = me.getValue(entrada_lista_comparendos)
-                    lt.addLast(lista_comparendos, data)
+                if mp.contains(mapa_vertices_gravedad, id_vertice_mas_cercano): # Si el mapa de vertices de la gravedad contiene el vertice más cercano
+                    entrada_lista_comparendos = mp.get(mapa_vertices_gravedad, id_vertice_mas_cercano) # Se obtiene la pareja {llave: id_vertice_mas_cercano, valor: lista_comparendos}
+                    lista_comparendos = me.getValue(entrada_lista_comparendos) # Se obtiene la lista de comparendos del vertice más cercano
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos del vertice más cercano
                     
-                else:
-                    lista_comparendos = lt.newList("ARRAY_LIST")
-                    lt.addLast(lista_comparendos, data)
-                    mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos)
+                elif not mp.contains(mapa_vertices_gravedad, id_vertice_mas_cercano): # Si el mapa de vertices de la gravedad no contiene el vertice más cercano
+                    lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                    lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                    mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices de la gravedad
                 
-            else: # Si el mapa de gravedad no contiene la gravedad
-                mapa_vertices_gravedad = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5)
-                lista_comparendos = lt.newList("ARRAY_LIST")
-                lt.addLast(lista_comparendos, data)
-                mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos)
-                om.put(mapa_gravedad_comparendos, servicio_infraccion, mapa_vertices_gravedad)
+            elif not mp.contains(mapa_gravedad_comparendos, servicio_infraccion):# Si el mapa de gravedad no contiene la gravedad
+                mapa_vertices_gravedad = mp.newMap(numelements=54209, maptype="PROBING", loadfactor=0.5) # Se crea un mapa de vertices de la gravedad
+                lista_comparendos = lt.newList("ARRAY_LIST") # Se crea una lista de comparendos
+                lt.addLast(lista_comparendos, data) # Se agrega el comparendo a la lista de comparendos
+                mp.put(mapa_vertices_gravedad, id_vertice_mas_cercano, lista_comparendos) # Se agrega la lista de comparendos al mapa de vertices de la gravedad
+                mp.put(mapa_gravedad_comparendos, servicio_infraccion, mapa_vertices_gravedad) # Se agrega el mapa de vertices de la gravedad al mapa de gravedad
                 
-                
-                        
+                              
         case "bogota_arcos.txt":
+            
+        # ============================================================================= Carga Grafo Arcos ============================================================================= # 
+            
             data = data.split() # Se formatea la información de string "# # #" a lista ["#", "#", "#"]
             id_origen = data[0] # Se obtiene el id del vertice origen en la primera posición de la lista
             ids_destino = data[1:] # Se obtiene el id del vertice destino en la segunda posición de la lista
@@ -311,7 +317,6 @@ def add_data(data_structs, archivo, data):
             latitud_origen = vertice_origen["lat"]
             estaciones_origen = vertice_origen["estaciones"]
             n_estaciones_origen = lt.size(estaciones_origen)
-            
             
             for id_destino in ids_destino:
                 
@@ -327,22 +332,19 @@ def add_data(data_structs, archivo, data):
                 n_comparendos_destino = lt.size(comparendos_destino)
                 
                 peso_comparendos = n_comparendos_destino + n_estaciones_origen
-                
-        
+            
                 gr.addEdge(data_structs["distancias"], id_origen, id_destino, peso_distancia) # Se agrega el arco al grafo de distancias
-                
-                
                 gr.addEdge(data_structs["comparendos"], id_origen, id_destino, peso_comparendos) # Se agrega el arco al grafo de comparendos
 
-        # =================================================== Arcos Estaciones Subgrafos =================================================== #
+        # ================================================================================== Arcos Estaciones Subgrafos ================================================================================== #
         
             for nombre_estacion in  ("Estación de Policía Antonio Nariño", "Estación de Policía Barrios Unidos","Estación de Policía Bosa", 
                                     "Estación de Policía Ciudad Bolívar", "Estación de Policía Engativá", "Estación de Policía Fontibón","Estación de Policía Kennedy", 
-                                    "Estación de Policía Los Mártires", "Estación de Policía Puente Aranda", "Estación de Policía Suba", "Estación de Policía Teusaquillo", 
+                                    "Estación de Policía Los Mártires", "Estación de Policía Puente Aranda", "Estación de Policía Suba", "Estación de Policía Teusaquillo", # Para cada estacion de policia
                                     "Estación de Policía Tunjuelito", "Estación de Policía Usaquén", "Estación de Policía Usme", "Estación de Policía La Candelaria", 
                                     "Estación de Policía Chapinero", "Estación de Policía San Cristóbal", "Estación de Policía Rafael Uribe Uribe", 
                                     "Estación de Policía Aeropuerto", "Estación de Policía Terminal", "Estación de Policía Santa Fe"): 
-            # Se recorren las estaciones de policia    
+                
                 mapa_estacion = data_structs[nombre_estacion] # Se obtiene el mapa de la estacion de policia
                 
                 if mp.contains(mapa_estacion, id_origen): # Si el mapa de la estacion de policia contiene el vertice origen
@@ -362,10 +364,17 @@ def add_data(data_structs, archivo, data):
                             
                             distancia = haversine(vertice_origen_latitud, vertice_origen_longitud, vertice_destino_latitud, vertice_destino_longitud) # Distancia entre vertice origen yvertice destino
                             
+                            entrada_subgrafo_estacion = mp.get(mapa_estaciones_subgrafo, nombre_estacion) # Se obtien la pareja {llave: nombre_estacion, valor: subgrafo_estacion}
+                            subgrafo_estacion = me.getValue(entrada_subgrafo_estacion) # Se obtiene el subgrafo de la estacion de policia
+                            
+                            gr.addEdge(subgrafo_estacion, id_origen, id_destino, distancia) # Se agrega el arco al subgrafo de la estacion de policia
+                            
+                            
+                            
                     
-# ===================================================================================================================================================================================================== #    
-# ========================================================================================== Priority Queues ========================================================================================== #    
-# ===================================================================================================================================================================================================== # 
+# =========================================================================================================================================================================================================== #    
+# ============================================================================================= Priority Queues ============================================================================================= #    
+# =========================================================================================================================================================================================================== # 
 
 
 def max_pq_localidades_comparendos(data_structs):
@@ -426,9 +435,10 @@ def max_pq_gravedad_comparendos(data_structs):
     mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] 
     mapa_gravedad_maxpq_comparendos = data_structs["mapa_gravedad_maxpq_comparendos"]
     
-    llaves_gravedad = om.keySet(mapa_gravedad_comparendos) # Se obtienen las llaves del mapa de gravedad
+    llaves_gravedad = mp.keySet(mapa_gravedad_comparendos)
+    print(llaves_gravedad)# Se obtienen las llaves del mapa de gravedad
     for llave_gravedad in lt.iterator(llaves_gravedad): # Para cada gravedad en el mapa de gravedad
-        entrada_mapa_gravedad = om.get(mapa_gravedad_comparendos, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: mapa de vertices de la gravedad}
+        entrada_mapa_gravedad = mp.get(mapa_gravedad_comparendos, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: mapa de vertices de la gravedad}
         mapa_vertices_gravedad = me.getValue(entrada_mapa_gravedad) # Se obtiene el mapa de vertices de la gravedad
         
         llaves_vertices_gravedad = mp.keySet(mapa_vertices_gravedad) # Se obtienen las llaves del mapa de vertices de la gravedad
@@ -486,17 +496,19 @@ def insert_vertex_estaciones(data_structs):
             longitud_estacion = estacion["long"] # Se obtiene la longitud de la estacion
             
             distancia = haversine(latitud_vertice, longitud_vertice, latitud_estacion, longitud_estacion) # Se calcula la distancia entre el vertice y la estacion
-            if distancia < min_distancia:
-                min_distancia = distancia
-                estacion_cercana = estacion
+            if distancia < min_distancia: # Si la distancia es menor a la distancia mínima
+                min_distancia = distancia # Se actualiza la distancia mínima
+                estacion_cercana = estacion # Se actualiza la estacion más cercana
                 
-        estacion_cercana_nombre = estacion_cercana["nombre"]      
-        entrada_grafo_estacion_destino = mp.get(mapa_estaciones_subgrafo, estacion_cercana_nombre)
-        grafo_estacion_destino = me.getValue(entrada_grafo_estacion_destino)
+        estacion_cercana_nombre = estacion_cercana["nombre"] # Se obtiene el nombre de la estacion más cercana   
+        entrada_grafo_estacion_destino = mp.get(mapa_estaciones_subgrafo, estacion_cercana_nombre) # Se obtiene la pareja {llave: estacion_cercana_nombre, valor: grafo_estacion_destino}
+        grafo_estacion_destino = me.getValue(entrada_grafo_estacion_destino) # Se obtiene el grafo de la estacion más cercana
         
-        mapa_estacion_destino = data_structs[estacion_cercana_nombre]
+        mapa_estacion_destino = data_structs[estacion_cercana_nombre]  # Mapa: {llave: id_vertice, valor: vertice}
+    
         mp.put(mapa_estacion_destino, llave_id_vertice, vertice)
         gr.insertVertex(grafo_estacion_destino, llave_id_vertice)
+        
         
 # ================================================================================================================================================================ #           
 # =============================================================== Funciones para creacion de datos =============================================================== #         
@@ -563,11 +575,14 @@ def get_orden_gravedad(codigo_gravedad):
     
     if codigo_gravedad[1] == "F": # Si el codigo de gravedad es F
         codigo_gravedad[1] = "F00" # Se cambia el codigo de gravedad a F00
-        
-    for caracter in codigo_gravedad[1]: # Para cada caracter en el codigo de gravedad
-        valor_2 = [] # Lista que contiene el segundo valor a comparar en el orden de gravedad
-        valor_2.append(-ord(caracter)) # Se agrega el valor del caracter a la lista de valor del caracter
-        
+    
+    valor_2 = [] # Lista que contiene el segundo valor a comparar en el orden de gravedad
+    valor_2.append(-ord(codigo_gravedad[1][0])) # Para cada caracter en el codigo de gravedad
+    
+    valor_2.append(-ord(codigo_gravedad[1][1:-1])) # Se agrega el valor ASCII del caracter a la lista de orden de gravedad
+            
+         
+   
     orden_gravedad.append(valor_2) # Se agrega el valor del caracter a la lista de orden de gravedad
     
     return orden_gravedad
@@ -776,19 +791,6 @@ def req_5(data_structs, n_camaras, clase_vehiculo):
     except Exception as e:
         print(e)
         
-        
-    
-        
-    
-        
-        
-
-        
-        
-        
-        
-    
-
 
 def req_6(data_structs, num_comparendos_graves):
     """
@@ -796,62 +798,65 @@ def req_6(data_structs, num_comparendos_graves):
     """
     # TODO: Realizar el requerimiento 6
     mapa_gravedad_comparendos_maxpq = data_structs["mapa_gravedad_maxpq_comparendos"] # 
-    mapa_vertices = data_structs["mapa_vertices"]
     mapa_estaciones = data_structs["mapa_estaciones"]
-    grafo_distancias = data_structs["distancias"]
+    mapa_estaciones_subgrafo = data_structs["mapa_estaciones_subgrafo"]
     
-    comparendos_estacion_cercana = mp.newMap(numelements=num_comparendos_graves, maptype="PROBING", loadfactor=0.5)
     
-    llaves_gravedad = om.keySet(mapa_gravedad_comparendos_maxpq) # Se obtienen las llaves del mapa de gravedad
+    recorridos = lt.newList("SINGLE_LINKED")
+    
+    llaves_gravedad = mp.keySet(mapa_gravedad_comparendos_maxpq) # Se obtienen las llaves del mapa de gravedad
+    llaves_gravedad = merg.sort(llaves_gravedad, compare_gravedad) # Se ordenan las llaves del mapa de gravedad
+    print(llaves_gravedad)
     i = 1 
     while i <= num_comparendos_graves: # Para cada comparendo grave solicitado
         for llave_gravedad in lt.iterator(llaves_gravedad): # Para cada gravedad en el mapa de gravedad
-            entrada_mapa_gravedad = om.get(mapa_gravedad_comparendos_maxpq, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: max_pq_comparendos}
+            entrada_mapa_gravedad = mp.get(mapa_gravedad_comparendos_maxpq, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: max_pq_comparendos}
             max_pq_comparendos = me.getValue(entrada_mapa_gravedad) # Se obtiene la max_pq de comparendos de la gravedad
             
             id_vertice_comparendo = impq.min(max_pq_comparendos) # Se obtiene el id del vertice con comparendo más grave
             if not impq.isEmpty(max_pq_comparendos): # Si el max_pq de comparendos no está vacío
                 impq.delMin(max_pq_comparendos) # Se elimina el vertice con comparendo más grave del max_pq de comparendos
             
-            entrada_vertice = mp.get(mapa_vertices, id_vertice_comparendo) # Se obtiene la pareja {llave: id_vertice_comparendo, valor: vertice}
-            vertice = me.getValue(entrada_vertice) # Se obtiene el mapa de vertices de la gravedad
-            
-            
-            llaves_mapa_estaciones = mp.keySet(mapa_estaciones) # Se obtienen las llaves del mapa de estaciones
-            
-            entrada_vertice = mp.get(mapa_vertices, id_vertice_comparendo) # Se obtiene la pareja {llave: id_vertice_comparendo, valor: vertice}
-            vertice = me.getValue(entrada_vertice) # Se obtiene el mapa de vertices de la gravedad
-            
-            estacion_cercana_comparendo = None # Se inicializa la estación más cercana al comparendo
-            distancia_estacion_cercana = float("inf")
-            for llave_estacion in lt.iterator(llaves_mapa_estaciones): # Para cada estación en el mapa de estaciones
-                entrada_mapa_estaciones = mp.get(mapa_estaciones, llave_estacion) # Se obtiene la pareja {llave: estacion, valor: estacion}
-                estacion = me.getValue(entrada_mapa_estaciones) # Se obtiene la estación
+            for nombre_estacion in ("Estación de Policía Antonio Nariño", "Estación de Policía Barrios Unidos","Estación de Policía Bosa", 
+                                    "Estación de Policía Ciudad Bolívar", "Estación de Policía Engativá", "Estación de Policía Fontibón","Estación de Policía Kennedy", 
+                                    "Estación de Policía Los Mártires", "Estación de Policía Puente Aranda", "Estación de Policía Suba", "Estación de Policía Teusaquillo", # Para cada estacion de policia
+                                    "Estación de Policía Tunjuelito", "Estación de Policía Usaquén", "Estación de Policía Usme", "Estación de Policía La Candelaria", 
+                                    "Estación de Policía Chapinero", "Estación de Policía San Cristóbal", "Estación de Policía Rafael Uribe Uribe", 
+                                    "Estación de Policía Aeropuerto", "Estación de Policía Terminal", "Estación de Policía Santa Fe"):
                 
-                distancia_estacion_comparendo = haversine(float(estacion["lat"]), float(estacion["long"]), float(vertice["lat"]), float(vertice["long"]))
-                if distancia_estacion_comparendo < distancia_estacion_cercana:
-                    estacion_cercana_comparendo = estacion
-                    distancia_estacion_cercana = distancia_estacion_comparendo 
-                    
-            search = djk.Dijkstra(grafo_distancias, estacion_cercana_comparendo["esquina_cercana"]) # Se crea un djks_search con el grafo de distancias y el id de la estación más cercana al comparendo                
-            if djk.hasPathTo(search, id_vertice_comparendo): # Si el djks_search tiene camino al vertice con comparendo más grave
-                path = djk.pathTo(search, id_vertice_comparendo) # Se obtiene el camino al vertice con comparendo más grave
-                distancia_estacion_cercana_djk = djk.distTo(search, id_vertice_comparendo) # Se obtiene la distancia al vertice con comparendo más grave
                 
-                        
-            info_estacion_cercana = {"id_vertice_cercano_comparendo": id_vertice_comparendo,
-                                     "gravedad": llave_gravedad,
-                                     "estacion_mas_cercana": estacion_cercana_comparendo,
-                                     "distancia": distancia_estacion_cercana_djk,               # Se crea la información de la estación más cercana al comparendo
-                                     "path": path}
-            
-            mp.put(comparendos_estacion_cercana, id_vertice_comparendo, info_estacion_cercana) # Se agrega la información de la estación más cercana al comparendo al mapa de comparendos con estación más cercana
-                        
+    
+                mapa_estacion = data_structs[nombre_estacion] # Se obtiene el sub_mapa de la estacion de policia
+                   
+                
+                if mp.contains(mapa_estacion, id_vertice_comparendo): # Si el mapa de estaciones contiene el vertice con comparendo más grave
+                    print(1)
+                    print(nombre_estacion)
+                    print(id_vertice_comparendo)
+                    entrada_mapa_estacion_subgrafo = mp.get(mapa_estaciones_subgrafo, nombre_estacion) # Se obtiene la pareja {llave: nombre_estacion, valor: subgrafo_estacion}
+                    estaciones_subgrafo = me.getValue(entrada_mapa_estacion_subgrafo)
                     
+                    entrada_estacion_origen = mp.get(mapa_estaciones, nombre_estacion)
+                    estacion_origen = me.getValue(entrada_estacion_origen)
+                    
+                    vertice_cercano_estacion_origen = estacion_origen["esquina_cercana"]
+                    
+                    search = djk.Dijkstra(estaciones_subgrafo, vertice_cercano_estacion_origen)
+                    
+                    if djk.hasPathTo(search, id_vertice_comparendo):
+                        pathTo = djk.pathTo(search, id_vertice_comparendo)
+                        disTo = djk.distTo(search, id_vertice_comparendo)
+                        
+                    info_comparendo_estacion = {"id_vertice_cercano_comparendo": id_vertice_comparendo,
+                                                "gravedad": llave_gravedad,
+                                                "estacion_mas_cercana": nombre_estacion,
+                                                "distancia": disTo,
+                                                "path": pathTo,
+                                                }
+                    lt.addFirst(recorridos, info_comparendo_estacion)
         i += 1
-        
-        lista = mp.valueSet(comparendos_estacion_cercana)
-    return lista
+            
+    return recorridos
         
     
                 
@@ -913,12 +918,11 @@ def compare_gravedad(data_1, data_2):
     data_1 = get_orden_gravedad(data_1)
     data_2 =  get_orden_gravedad(data_2)
     
-    if data_1 > data_2:
-        return 1
-    elif data_1 < data_2:
-        return -1
-    else:
-        return 0
+    if data_1 <= data_2:
+        return True
+    elif data_1 > data_2:
+        return False
+    
     
    
 def compare_gravedad_pq(data_1, data_2):
