@@ -121,7 +121,7 @@ def print_req_3(control):
     
     try:
         consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_localidad = input("Ingrese la localidad a consultar: ")
+        consulta_localidad = input("Ingrese la localidad a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_3(control, consulta_camaras, consulta_localidad)
 
@@ -189,7 +189,7 @@ def print_req_5(control):
     
     try: 
         consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
+        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
         
