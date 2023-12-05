@@ -35,67 +35,53 @@ def new_controller():
     """
     Crea una instancia del modelo
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
+    
     return model.new_data_structs()
 
 
-# Funciones para la carga de datos
+# ====================================================================================================================================================================== #
+# =========================================================================== Carga de Datos =========================================================================== #
+# ====================================================================================================================================================================== #
+
 
 def load_data(data_structs):
     """
     Carga los datos del reto
     """
     
-    vertices_archivo = cf.data_dir + 'bogota_vertices.txt'
-    with open(vertices_archivo, 'r') as f:
+    vertices_archivo = cf.data_dir + 'bogota_vertices.txt' # Se crea el camino al archivo de vertices
+    with open(vertices_archivo, 'r') as f: # Se abre el archivo de vertices
         vertices = f.readlines()
     for vertice in vertices:
         model.add_data(data_structs, 'bogota_vertices.txt', vertice)
     
     
-    estaciones_archivo = cf.data_dir + 'estacionpolicia_bogota_vertices.csv'
-    f = open(estaciones_archivo, 'r', encoding='utf-8')
-    estaciones = csv.DictReader(f)
+    estaciones_archivo = cf.data_dir + 'estacionpolicia_bogota_vertices.csv' # Se crea el camino al archivo de estaciones
+    f = open(estaciones_archivo, 'r', encoding='utf-8') # Se abre el archivo de estaciones
+    estaciones = csv.DictReader(f) # Se formatea el archivo de estaciones en diccionarios
     for estacion in estaciones:
         model.add_data(data_structs, 'estacionpolicia_bogota_vertices.csv', estacion)
+    model.insert_vertex_estaciones(data_structs)  
         
-        
-    comparendos_archivo = cf.data_dir + 'comparendos_2019_bogota_vertices.csv'
-    f = open(comparendos_archivo, 'r', encoding='utf-8')
-    comparendos = csv.DictReader(f)
+    comparendos_archivo = cf.data_dir + 'comparendos_2019_bogota_vertices.csv' # Se crea el camino al archivo de comparendos
+    f = open(comparendos_archivo, 'r', encoding='utf-8') # Se abre el archivo de comparendos
+    comparendos = csv.DictReader(f) # Se formatea el archivo de comparendos en diccionarios
     for comparendo in comparendos:
         model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
-    model.min_pq_localidades_comparendos(data_structs)
-    model.min_pq_vehiculo_comparendos(data_structs)
-    model.min_pq_gravedad_comparendos(data_structs)
+    model.max_pq_localidades_comparendos(data_structs)
+    model.max_pq_vehiculo_comparendos(data_structs)
+    model.max_pq_gravedad_comparendos(data_structs)
 
-    arcos_archivo = cf.data_dir + 'bogota_arcos.txt'
-    with open(arcos_archivo, 'r') as f:
+    arcos_archivo = cf.data_dir + 'bogota_arcos.txt' # Se crea el camino al archivo de arcos
+    with open(arcos_archivo, 'r') as f: # Se abre el archivo de arcos
         arcos = f.readlines()
     for arco in arcos:
         model.add_data(data_structs, 'bogota_arcos.txt', arco)
-        
-      
 
 
-# Funciones de ordenamiento
-
-def sort(control):
-    """
-    Ordena los datos del modelo
-    """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
-
-
-# Funciones de consulta sobre el catálogo
-
-def get_data(control, id):
-    """
-    Retorna un dato por su ID.
-    """
-    #TODO: Llamar la función del modelo para obtener un dato
-    pass
+# ====================================================================================================================================================================== #
+# ==================================================================== Reslución de Requerimientos ===================================================================== #
+# ====================================================================================================================================================================== #
 
 
 def req_1(control, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino):
@@ -140,6 +126,7 @@ def req_3(control, consulta_camaras, consulta_localidad):
     dm = abs(delta_memory(dm1,dm2))
     return total_camaras, id_vertices, arcos, extension, costo, dt, dm
 
+
 def req_4(control):
     """
     Retorna el resultado del requerimiento 4
@@ -162,8 +149,7 @@ def req_5(control, consulta_camaras, consulta_clase_vehiculo):
     dt = delta_time(t0,t1)
     dm = abs(delta_memory(m0,m1))
     return total_camaras, id_vertices, arcos, extension, costo, dt, dm
-    # except Exception as exp:
-    #     return None, None, None, None, None, None, None
+
 
 def req_6(control, num_comparendos_graves):
     """
@@ -182,7 +168,6 @@ def req_6(control, num_comparendos_graves):
     return lista, dt, dm
     
 
-
 def req_7(control):
     """
     Retorna el resultado del requerimiento 7
@@ -199,14 +184,16 @@ def req_8(control):
     pass
 
 
-# Funciones para medir tiempos de ejecucion
+# ====================================================================================================================================================================== #
+# ============================================================= Funciones para medir tiempos de ejecucion ============================================================== #
+# ====================================================================================================================================================================== #
+
 
 def get_time():
     """
     devuelve el instante tiempo de procesamiento en milisegundos
     """
     return float(time.perf_counter()*1000)
-
 
 def delta_time(start, end):
     """
@@ -221,7 +208,6 @@ def get_memory():
     """
     tracemalloc.start()
     return tracemalloc.take_snapshot()
-
 
 def delta_memory(stop_memory, start_memory):
     """

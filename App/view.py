@@ -41,12 +41,11 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
-
 def new_controller():
     """
         Se crea una instancia del controlador
     """
-    #TODO: Llamar la función del controlador donde se crean las estructuras de datos
+    
     return controller.new_controller()
 
 
@@ -68,7 +67,7 @@ def load_data(control):
     """
     Carga los datos
     """
-    #TODO: Realizar la carga de datos
+    
     controller.load_data(control)
 
 
@@ -83,7 +82,6 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 1
     
     latitud_vertice_origen = float(input("Ingrese la latitud del vertice origen: "))
     longitud_vertice_origen = float(input("Ingrese la longitud del vertice origen: "))
@@ -103,12 +101,10 @@ def print_req_1(control):
                 f"Distancia Total Recorrida: {round(total_distancia, 2)} km\n"
                 f"Camino Recorrido: {pathTo}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
         
     except ValueError:
-        print("Porfavor ingresa los vertices correctamente")
+        print("Por favor ingrese los vertices correctamente")
 
 def print_req_2(control):
     """
@@ -122,7 +118,7 @@ def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
+    
     try:
         consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
         consulta_localidad = input("Ingrese la localidad a consultar: ")
@@ -157,11 +153,8 @@ def print_req_3(control):
             return adjacency_matrix, vertices
 
         adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
-
-        # Convert adjacency_matrix and headers to DataFrame
         df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
 
-        
         print(f"\n====================================== Req No. 3 Inputs ======================================\n"
                 f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
                 f"Consulta Localidad: {consulta_localidad}\n"
@@ -172,23 +165,28 @@ def print_req_3(control):
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
                 f"Conecciones entre Cámaras:\n{df}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
+        
     except ValueError:
-        print("Please enter valid input for the number of cameras.")
+        print("Please ingrese un input válido.")
+        
+        
 def print_req_4(control):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    
+    try:
+        pass
+    except ValueError:
+        print("Por favor ingrese un input válido.")
 
 
 def print_req_5(control):
     """
     Function that prints the solution of Requirement 5 to the console
     """
+    
     try: 
         consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
         consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
@@ -224,13 +222,9 @@ def print_req_5(control):
             return adjacency_matrix, vertices
 
         adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
-
-        # Convert adjacency_matrix and headers to DataFrame
+        
         df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
         
-
-
-
         print(f"\n====================================== Req No. 2 Inputs ======================================\n"
                 f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
                 f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
@@ -241,19 +235,10 @@ def print_req_5(control):
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
                 f"Conecciones entre Cámaras:\n{df}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
         
-        # Printing adjacency matrix
-        
-
     except ValueError:
-        print("Please enter valid input for the number of cameras.")
-
-    
-    # except Exception as exp:
-    #     print(f"Error en la ejecución del requerimiento 5: {exp}\n")
+        print("Por favor ingrese un input válido.")
 
 
 def print_req_6(control):
@@ -261,33 +246,30 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     
-    
-    consulta_comparendos = int(input("Ingrese el número de comparendos a responder: "))
-    lista, dt, dm = controller.req_6(control, consulta_comparendos)
-    
-    print(f"\n====================================== Req No. 6 Inputs ======================================\n"
-            f"Número de Comparendos a Responder: {consulta_comparendos}\n"
-            f"====================================== Req No. 6 Results ======================================\n"
-            f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-            f"La memoria usada del requerimiento es: {dm} kB\n"
-            )
-    
-    for info in lt.iterator(lista):
-        print(f"ID del vértice más cercano al comparendo: {info['id_vertice_cercano_comparendo']}\n"
-              f"Gravedad del comparendo: {info['gravedad_comparendo']}\n"
-              f"Estación de policía más cercana: {info['estacion_ma_cercana']}\n"
-              f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia_al_vertice'], 2)} km\n")
-        for arco in info['path']:
-            camino = st.pop(arco)
-            print(camino)
+    try: 
+        consulta_comparendos = int(input("Ingrese el número de comparendos a responder: "))
+        lista, dt, dm = controller.req_6(control, consulta_comparendos)
+        
+        print(f"\n====================================== Req No. 6 Inputs ======================================\n"
+                f"Número de Comparendos a Responder: {consulta_comparendos}\n"
+                f"====================================== Req No. 6 Results ======================================\n"
+                f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
+                f"La memoria usada del requerimiento es: {dm} kB\n"
+                )
+        
+        for info in lt.iterator(lista):
+            print(f"ID del vértice más cercano al comparendo: {info['id_vertice_cercano_comparendo']}\n"
+                f"Gravedad del comparendo: {info['gravedad_comparendo']}\n"
+                f"Estación de policía más cercana: {info['estacion_ma_cercana']}\n"
+                f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia_al_vertice'], 2)} km\n")
+            for arco in info['path']:
+                camino = st.pop(arco)
+                print(camino)
+                
+    except ValueError:
+        print("Por favor ingrese un input válido.")
             
-            
         
-        
-
-        
-
-
 def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
@@ -314,47 +296,55 @@ def thread_cycle():
     """
     working = True
     #ciclo del menu
+    
+    
     while working:
         print_menu()
-        inputs = input('Seleccione una opción para continuar\n')
-        if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            data = load_data(control)
-        elif int(inputs) == 2:
-            print_req_1(control)
+        try: 
+            inputs = input('Seleccione una opción para continuar\n')
+            if int(inputs) == 1:
+                print("Cargando información de los archivos ....\n")
+                data = load_data(control)
+            elif int(inputs) == 2:
+                print_req_1(control)
 
-        elif int(inputs) == 3:
-            print_req_2(control)
+            elif int(inputs) == 3:
+                print_req_2(control)
 
-        elif int(inputs) == 4:
-            print_req_3(control)
+            elif int(inputs) == 4:
+                print_req_3(control)
 
-        elif int(inputs) == 5:
-            print_req_4(control)
+            elif int(inputs) == 5:
+                print_req_4(control)
 
-        elif int(inputs) == 6:
-            print_req_5(control)
+            elif int(inputs) == 6:
+                print_req_5(control)
 
-        elif int(inputs) == 7:
-            print_req_6(control)
+            elif int(inputs) == 7:
+                print_req_6(control)
 
-        elif int(inputs) == 8:
-            print_req_7(control)
+            elif int(inputs) == 8:
+                print_req_7(control)
 
-        elif int(inputs) == 9:
-            print_req_8(control)
+            elif int(inputs) == 9:
+                print_req_8(control)
 
-        elif int(inputs) == 0:
-            working = False
-            print("\nGracias por utilizar el programa")
+            elif int(inputs) == 0:
+                working = False
+                print("\nGracias por utilizar el programa")
             
-        else:
+            else:
+                print("Opción errónea, vuelva a elegir.\n")
+                
+        except ValueError:
             print("Opción errónea, vuelva a elegir.\n")
+            traceback.print_exc()
+    
     sys.exit(0)
     
     
 if __name__ == "__main__":
-    threading.stack_size(67108864) # 64MB stack
-    sys.setrecursionlimit(2 ** 20)  # approx 1 million recursions
-    thread = threading.Thread(target=thread_cycle) # instantiate thread object
-    thread.start() # run program at target
+    threading.stack_size(67108864) 
+    sys.setrecursionlimit(2**20)  
+    thread = threading.Thread(target=thread_cycle) 
+    thread.start() 
