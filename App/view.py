@@ -177,7 +177,47 @@ def print_req_4(control):
     """
     
     try:
-        pass
+        consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
+        total_camaras, id_vertices, arcos, extension, costo = controller.req_4(control, consulta_camaras)
+        def create_adjacency_matrix_with_headers(arcs):
+            vertices = set()
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertices.add(key['key'])
+                    vertices.add(key['value']['vertexA'])
+                    vertices.add(key['value']['vertexB'])
+
+            vertices = sorted(list(vertices))
+            vertex_index = {vertex: index for index, vertex in enumerate(vertices)}
+            matrix_size = len(vertices)
+            
+            adjacency_matrix = [[None] * matrix_size for _ in range(matrix_size)]
+
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertex_a = key['key']
+                    vertex_b = key['value']['vertexA']
+                    weight = key['value']['weight']
+                    if vertex_a is not None and vertex_b is not None:
+                        index_a = vertex_index[vertex_a]
+                        index_b = vertex_index[vertex_b]
+                        adjacency_matrix[index_a][index_b] = weight
+                        adjacency_matrix[index_b][index_a] = weight
+
+            return adjacency_matrix, vertices
+
+        adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
+        
+        df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
+        
+        print(f"\n====================================== Req No. 4 Inputs ======================================\n"
+                f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
+                f"====================================== Req No. 4 Results ======================================\n"
+                f"Total de Cámaras Puestas: {total_camaras}\n"
+                f"Identificadores de las Cámaras: {headers}\n"
+                f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
+                f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n")
+        
     except ValueError:
         print("\nPor favor ingrese un input válido.")
 

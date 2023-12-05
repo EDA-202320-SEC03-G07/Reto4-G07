@@ -132,7 +132,8 @@ def req_4(control):
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
-    pass
+    total_camara, id_vertices, arcos, extension, costo = model.req_4(control)
+    return total_camara, id_vertices, arcos, extension, costo
 
 
 def req_5(control, consulta_camaras, consulta_clase_vehiculo):

@@ -701,12 +701,56 @@ def req_3(data_structs, n_camaras, localidad):
 
 
 
-def req_4(data_structs):
+def req_4(data_structs, n_camaras):
     """
     Función que soluciona el requerimiento 4
     """
     # TODO: Realizar el requerimiento 4
-    pass
+    
+    mapa_vertices = data_structs["mapa_vertices"]
+    mapa_gravedad_comparendos_maxpq = data_structs["mapa_gravedad_maxpq_comparendos"]
+    llaves_gravedad = om.keySet(mapa_gravedad_comparendos_maxpq) # Se obtienen las llaves del mapa de gravedad
+    
+    sub_grafo = gr.newGraph(datastructure="ADJ_LIST", directed=False)
+    sub_mapa = mp.newMap(numelements=120000, maptype="PROBING", loadfactor=0.5)
+    
+    for i in range(n_camaras):
+        id_vertice = impq.min(mapa_gravedad_comparendos_maxpq)
+        impq.delMin(mapa_gravedad_comparendos_maxpq)
+        entrada_mapa_vertices = mp.get(mapa_vertices, id_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+        vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
+            
+        vertice_grafo = new_reduced_data(vertice) # Se crea un vertice con la información del vertice pertinente
+        mp.put(sub_mapa, id_vertice, vertice_grafo) # Se agrega el vertice al mapa de vertices del subgrafo
+        gr.insertVertex(sub_grafo, vertice_grafo["id"]) # Se agrega el vertice al subgrafo
+    vertices_llaves = mp.keySet(sub_mapa)
+    i = 0
+    for llave_vertice in lt.iterator(vertices_llaves):
+        entrada_mapa_vertices = mp.get(sub_mapa, llave_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+            vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
+            size = lt.size(vertices_llaves) # Se obtiene el tamaño de la lista de vertices del subgrafo
+            
+            posicion_vertice = lt.isPresent(vertices_llaves, llave_vertice) # Se obtiene la posición del vertice en la lista de vertices del subgrafo
+            if posicion_vertice != 0: # Si el vertice está en la lista de vertices del subgrafo
+                demas_vertices = lt.subList(vertices_llaves, posicion_vertice, size+i) # Se obtienen los vertices restantes en la lista de vertices del subgrafo
+                
+            for llave_demas_vertice in lt.iterator(demas_vertices):
+                entrada_llave_demas_vertice = mp.get(sub_mapa, llave_demas_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+                llave_demas_vertice = me.getValue(entrada_llave_demas_vertice) # Se obtiene el vertice
+                distancia = haversine(vertice["lat"], vertice["long"], llave_demas_vertice["lat"], llave_demas_vertice["long"]) # Se calcula la distancia entre el vertice y los demás vertices del subgrafo
+                gr.addEdge(sub_grafo, vertice["id"], llave_demas_vertice["id"], distancia) # Se agregan los arcos entre el vertice y los demás vertices del subgrafo
+            i -= 1 
+            
+        origen = lt.firstElement(vertices_llaves) # Se obtiene el primer vertice de la lista de vertices del subgrafo    
+        mst = prim.PrimMST(sub_grafo, origin=origen) # Se obtiene el MST del subgrafo
+        mst_grafo = prim.prim(sub_grafo, mst, origen) # Se obtiene el grafo con los arcos del recorrdio del MST
+        total_camaras = lt.size(vertices_llaves) 
+        id_vertices = vertices_llaves 
+        arcos = prim.edgesMST(sub_grafo, mst) # Se obtienen los arcos del MST
+        extension =  prim.weightMST(sub_grafo, mst) # Se obtienen los arcos del MST
+        
+        costo = extension * 1000000
+    return total_camaras, id_vertices, arcos, extension, costo
 
 
 def req_5(data_structs, n_camaras, clase_vehiculo):
