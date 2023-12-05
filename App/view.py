@@ -121,7 +121,7 @@ def print_req_3(control):
     
     try:
         consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_localidad = input("Ingrese la localidad a consultar: ")
+        consulta_localidad = input("Ingrese la localidad a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_3(control, consulta_camaras, consulta_localidad)
 
@@ -229,7 +229,7 @@ def print_req_5(control):
     
     try: 
         consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
+        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
         
@@ -273,7 +273,7 @@ def print_req_5(control):
                 f"Identificadores de las Cámaras: {headers}\n"
                 f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
-                f"Conecciones entre Cámaras:\n{df}\n"
+                f"Conecciones entre Cámaras:\n{tabulate(df, headers='keys', tablefmt='rounded_grid', showindex=True)}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
                 f"La memoria usada del requerimiento es: {dm} kB\n")
         
@@ -299,12 +299,12 @@ def print_req_6(control):
         
         for info in lt.iterator(lista):
             print(f"ID del vértice más cercano al comparendo: {info['id_vertice_cercano_comparendo']}\n"
-                f"Gravedad del comparendo: {info['gravedad_comparendo']}\n"
-                f"Estación de policía más cercana: {info['estacion_ma_cercana']}\n"
-                f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia_al_vertice'], 2)} km\n")
-            for arco in info['path']:
-                camino = st.pop(arco)
-                print(camino)
+                f"Gravedad del comparendo: {info['gravedad']}\n"
+                f"Estación de policía más cercana: {info['estacion_mas_cercana']}\n"
+                f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia'], 2)} km\n")
+            # for arco in info['path']:
+            #     camino = st.pop(arco)
+            #     print(camino)
                 
     except ValueError:
         print("\nPor favor ingrese un input válido.")
