@@ -742,19 +742,19 @@ def req_4(data_structs, n_camaras):
     i = 0
     for llave_vertice in lt.iterator(vertices_llaves):
         entrada_mapa_vertices = mp.get(sub_mapa, llave_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
-            vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
-            size = lt.size(vertices_llaves) # Se obtiene el tamaño de la lista de vertices del subgrafo
+        vertice = me.getValue(entrada_mapa_vertices) # Se obtiene el vertice
+        size = lt.size(vertices_llaves) # Se obtiene el tamaño de la lista de vertices del subgrafo
             
-            posicion_vertice = lt.isPresent(vertices_llaves, llave_vertice) # Se obtiene la posición del vertice en la lista de vertices del subgrafo
-            if posicion_vertice != 0: # Si el vertice está en la lista de vertices del subgrafo
-                demas_vertices = lt.subList(vertices_llaves, posicion_vertice, size+i) # Se obtienen los vertices restantes en la lista de vertices del subgrafo
+        posicion_vertice = lt.isPresent(vertices_llaves, llave_vertice) # Se obtiene la posición del vertice en la lista de vertices del subgrafo
+        if posicion_vertice != 0: # Si el vertice está en la lista de vertices del subgrafo
+            demas_vertices = lt.subList(vertices_llaves, posicion_vertice, size+i) # Se obtienen los vertices restantes en la lista de vertices del subgrafo
                 
-            for llave_demas_vertice in lt.iterator(demas_vertices):
-                entrada_llave_demas_vertice = mp.get(sub_mapa, llave_demas_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
-                llave_demas_vertice = me.getValue(entrada_llave_demas_vertice) # Se obtiene el vertice
-                distancia = haversine(vertice["lat"], vertice["long"], llave_demas_vertice["lat"], llave_demas_vertice["long"]) # Se calcula la distancia entre el vertice y los demás vertices del subgrafo
-                gr.addEdge(sub_grafo, vertice["id"], llave_demas_vertice["id"], distancia) # Se agregan los arcos entre el vertice y los demás vertices del subgrafo
-            i -= 1 
+        for llave_demas_vertice in lt.iterator(demas_vertices):
+            entrada_llave_demas_vertice = mp.get(sub_mapa, llave_demas_vertice) # Se obtiene la pareja {llave: id_vertice, valor: vertice}
+            llave_demas_vertice = me.getValue(entrada_llave_demas_vertice) # Se obtiene el vertice
+            distancia = haversine(vertice["lat"], vertice["long"], llave_demas_vertice["lat"], llave_demas_vertice["long"]) # Se calcula la distancia entre el vertice y los demás vertices del subgrafo
+            gr.addEdge(sub_grafo, vertice["id"], llave_demas_vertice["id"], distancia) # Se agregan los arcos entre el vertice y los demás vertices del subgrafo
+        i -= 1 
             
         origen = lt.firstElement(vertices_llaves) # Se obtiene el primer vertice de la lista de vertices del subgrafo    
         mst = prim.PrimMST(sub_grafo, origin=origen) # Se obtiene el MST del subgrafo
