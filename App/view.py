@@ -50,7 +50,7 @@ def new_controller():
 
 
 def print_menu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información")
     print("2- Ejecutar Requerimiento 1")
     print("3- Ejecutar Requerimiento 2")
@@ -104,7 +104,7 @@ def print_req_1(control):
                 f"La memoria usada del requerimiento es: {dm} kB\n")
         
     except ValueError:
-        print("Por favor ingrese los vertices correctamente")
+        print("\nPor favor ingrese los vertices correctamente")
 
 def print_req_2(control):
     """
@@ -179,7 +179,7 @@ def print_req_4(control):
     try:
         pass
     except ValueError:
-        print("Por favor ingrese un input válido.")
+        print("\nPor favor ingrese un input válido.")
 
 
 def print_req_5(control):
@@ -230,7 +230,7 @@ def print_req_5(control):
                 f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
                 f"====================================== Req No. 2 Results ======================================\n"
                 f"Total de Cámaras Puestas: {total_camaras}\n"
-                f"Identificadores de las Cámaras: {id_vertices}\n"
+                f"Identificadores de las Cámaras: {headers}\n"
                 f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
                 f"Conecciones entre Cámaras:\n{df}\n"
@@ -238,7 +238,7 @@ def print_req_5(control):
                 f"La memoria usada del requerimiento es: {dm} kB\n")
         
     except ValueError:
-        print("Por favor ingrese un input válido.")
+        print("\nPor favor ingrese un input válido.")
 
 
 def print_req_6(control):
@@ -267,7 +267,7 @@ def print_req_6(control):
                 print(camino)
                 
     except ValueError:
-        print("Por favor ingrese un input válido.")
+        print("\nPor favor ingrese un input válido.")
             
         
 def print_req_7(control):
@@ -334,10 +334,10 @@ def thread_cycle():
                 print("\nGracias por utilizar el programa")
             
             else:
-                print("Opción errónea, vuelva a elegir.\n")
+                print("\nOpción errónea, vuelva a elegir.\n")
                 
         except ValueError:
-            print("Opción errónea, vuelva a elegir.\n")
+            print("\nOpción errónea, vuelva a elegir.\n")
             traceback.print_exc()
     
     sys.exit(0)
