@@ -41,17 +41,16 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
-
 def new_controller():
     """
         Se crea una instancia del controlador
     """
-    #TODO: Llamar la función del controlador donde se crean las estructuras de datos
+    
     return controller.new_controller()
 
 
 def print_menu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información")
     print("2- Ejecutar Requerimiento 1")
     print("3- Ejecutar Requerimiento 2")
@@ -68,7 +67,7 @@ def load_data(control):
     """
     Carga los datos
     """
-    #TODO: Realizar la carga de datos
+    
     controller.load_data(control)
 
 
@@ -83,7 +82,6 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 1
     
     latitud_vertice_origen = float(input("Ingrese la latitud del vertice origen: "))
     longitud_vertice_origen = float(input("Ingrese la longitud del vertice origen: "))
@@ -103,12 +101,10 @@ def print_req_1(control):
                 f"Distancia Total Recorrida: {round(total_distancia, 2)} km\n"
                 f"Camino Recorrido: {pathTo}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
         
     except ValueError:
-        print("Porfavor ingresa los vertices correctamente")
+        print("\nPor favor ingrese los vertices correctamente")
 
 def print_req_2(control):
     """
@@ -145,10 +141,10 @@ def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
+    
     try:
         consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_localidad = input("Ingrese la localidad a consultar: ")
+        consulta_localidad = input("Ingrese la localidad a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_3(control, consulta_camaras, consulta_localidad)
 
@@ -180,11 +176,8 @@ def print_req_3(control):
             return adjacency_matrix, vertices
 
         adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
-
-        # Convert adjacency_matrix and headers to DataFrame
         df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
 
-        
         print(f"\n====================================== Req No. 3 Inputs ======================================\n"
                 f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
                 f"Consulta Localidad: {consulta_localidad}\n"
@@ -195,26 +188,71 @@ def print_req_3(control):
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
                 f"Conecciones entre Cámaras:\n{df}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
+        
     except ValueError:
-        print("Please enter valid input for the number of cameras.")
+        print("Please ingrese un input válido.")
+        
+        
 def print_req_4(control):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    
+    try:
+        consulta_camaras = int(input("Ingrese el número de cámaras a poner: "))
+        total_camaras, id_vertices, arcos, extension, costo = controller.req_4(control, consulta_camaras)
+        def create_adjacency_matrix_with_headers(arcs):
+            vertices = set()
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertices.add(key['key'])
+                    vertices.add(key['value']['vertexA'])
+                    vertices.add(key['value']['vertexB'])
+
+            vertices = sorted(list(vertices))
+            vertex_index = {vertex: index for index, vertex in enumerate(vertices)}
+            matrix_size = len(vertices)
+            
+            adjacency_matrix = [[None] * matrix_size for _ in range(matrix_size)]
+
+            for key in arcs['edgeTo']['table']['elements']:
+                if key is not None and key['value'] is not None:
+                    vertex_a = key['key']
+                    vertex_b = key['value']['vertexA']
+                    weight = key['value']['weight']
+                    if vertex_a is not None and vertex_b is not None:
+                        index_a = vertex_index[vertex_a]
+                        index_b = vertex_index[vertex_b]
+                        adjacency_matrix[index_a][index_b] = weight
+                        adjacency_matrix[index_b][index_a] = weight
+
+            return adjacency_matrix, vertices
+
+        adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
+        
+        df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
+        
+        print(f"\n====================================== Req No. 4 Inputs ======================================\n"
+                f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
+                f"====================================== Req No. 4 Results ======================================\n"
+                f"Total de Cámaras Puestas: {total_camaras}\n"
+                f"Identificadores de las Cámaras: {headers}\n"
+                f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
+                f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n")
+        
+    except ValueError:
+        print("\nPor favor ingrese un input válido.")
 
 
 def print_req_5(control):
     """
     Function that prints the solution of Requirement 5 to the console
     """
+    
     try: 
         consulta_camaras  = int(input("Ingrese el número de cámaras a poner: "))
-        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ")
+        consulta_clase_vehiculo = input("Ingrese la clase de vehículo a consultar: ").upper()
         
         total_camaras, id_vertices, arcos, extension, costo, dt, dm = controller.req_5(control, consulta_camaras, consulta_clase_vehiculo)
         
@@ -247,46 +285,54 @@ def print_req_5(control):
             return adjacency_matrix, vertices
 
         adjacency_matrix, headers = create_adjacency_matrix_with_headers(arcos)
-
-        # Convert adjacency_matrix and headers to DataFrame
+        
         df = pd.DataFrame(adjacency_matrix, columns=headers, index=headers)
         
-
-
-
         print(f"\n====================================== Req No. 2 Inputs ======================================\n"
                 f"Número de Cámaras Solicitadas: {consulta_camaras}\n"
                 f"Consulta Clase de Vehículo: {consulta_clase_vehiculo}\n"
                 f"====================================== Req No. 2 Results ======================================\n"
                 f"Total de Cámaras Puestas: {total_camaras}\n"
-                f"Identificadores de las Cámaras: {id_vertices}\n"
+                f"Identificadores de las Cámaras: {headers}\n"
                 f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
-                f"Conecciones entre Cámaras:\n{df}\n"
+                f"Conecciones entre Cámaras:\n{tabulate(df, headers='keys', tablefmt='rounded_grid', showindex=True)}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
-                f"La memoria usada del requerimiento es: {dm} kB\n"
-                
-        )
+                f"La memoria usada del requerimiento es: {dm} kB\n")
         
-        # Printing adjacency matrix
-        
-
     except ValueError:
-        print("Please enter valid input for the number of cameras.")
-
-    
-    # except Exception as exp:
-    #     print(f"Error en la ejecución del requerimiento 5: {exp}\n")
+        print("\nPor favor ingrese un input válido.")
 
 
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 6
     
-
-
+    try: 
+        consulta_comparendos = int(input("Ingrese el número de comparendos a responder: "))
+        lista, dt, dm = controller.req_6(control, consulta_comparendos)
+        
+        print(f"\n====================================== Req No. 6 Inputs ======================================\n"
+                f"Número de Comparendos a Responder: {consulta_comparendos}\n"
+                f"====================================== Req No. 6 Results ======================================\n"
+                f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
+                f"La memoria usada del requerimiento es: {dm} kB\n"
+                )
+        
+        for info in lt.iterator(lista):
+            print(f"ID del vértice más cercano al comparendo: {info['id_vertice_cercano_comparendo']}\n"
+                f"Gravedad del comparendo: {info['gravedad']}\n"
+                f"Estación de policía más cercana: {info['estacion_mas_cercana']}\n"
+                f"Distancia entre esquinas más cercanas de la estación al comparendo: {round(info['distancia'], 2)} km\n")
+            # for arco in info['path']:
+            #     camino = st.pop(arco)
+            #     print(camino)
+                
+    except ValueError:
+        print("\nPor favor ingrese un input válido.")
+            
+        
 def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
@@ -313,47 +359,55 @@ def thread_cycle():
     """
     working = True
     #ciclo del menu
+    
+    
     while working:
         print_menu()
-        inputs = input('Seleccione una opción para continuar\n')
-        if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            data = load_data(control)
-        elif int(inputs) == 2:
-            print_req_1(control)
+        try: 
+            inputs = input('Seleccione una opción para continuar\n')
+            if int(inputs) == 1:
+                print("Cargando información de los archivos ....\n")
+                data = load_data(control)
+            elif int(inputs) == 2:
+                print_req_1(control)
 
-        elif int(inputs) == 3:
-            print_req_2(control)
+            elif int(inputs) == 3:
+                print_req_2(control)
 
-        elif int(inputs) == 4:
-            print_req_3(control)
+            elif int(inputs) == 4:
+                print_req_3(control)
 
-        elif int(inputs) == 5:
-            print_req_4(control)
+            elif int(inputs) == 5:
+                print_req_4(control)
 
-        elif int(inputs) == 6:
-            print_req_5(control)
+            elif int(inputs) == 6:
+                print_req_5(control)
 
-        elif int(inputs) == 7:
-            print_req_6(control)
+            elif int(inputs) == 7:
+                print_req_6(control)
 
-        elif int(inputs) == 8:
-            print_req_7(control)
+            elif int(inputs) == 8:
+                print_req_7(control)
 
-        elif int(inputs) == 9:
-            print_req_8(control)
+            elif int(inputs) == 9:
+                print_req_8(control)
 
-        elif int(inputs) == 0:
-            working = False
-            print("\nGracias por utilizar el programa")
+            elif int(inputs) == 0:
+                working = False
+                print("\nGracias por utilizar el programa")
             
-        else:
-            print("Opción errónea, vuelva a elegir.\n")
+            else:
+                print("\nOpción errónea, vuelva a elegir.\n")
+                
+        except ValueError:
+            print("\nOpción errónea, vuelva a elegir.\n")
+            traceback.print_exc()
+    
     sys.exit(0)
     
     
 if __name__ == "__main__":
-    threading.stack_size(67108864) # 64MB stack
-    sys.setrecursionlimit(2 ** 20)  # approx 1 million recursions
-    thread = threading.Thread(target=thread_cycle) # instantiate thread object
-    thread.start() # run program at target
+    threading.stack_size(67108864) 
+    sys.setrecursionlimit(2**20)  
+    thread = threading.Thread(target=thread_cycle) 
+    thread.start() 
