@@ -117,12 +117,23 @@ def req_1(control, latitud_vertice_origen, longitud_vertice_origen, latitud_vert
     return total_vertices, total_distancia, pathTo, dt, dm
 
 
-def req_2(control):
+def req_2(data_structs, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino):
     """
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    pass
+    
+    dt1 = get_time()
+    dm1 = get_memory()
+    
+    total_vertices, total_distancia, pathTo = model.req_2(data_structs, latitud_vertice_origen, longitud_vertice_origen, latitud_vertice_destino, longitud_vertice_destino)
+    
+    dt2 = get_time()
+    dm2 = get_memory()
+    dt = delta_time(dt1,dt2)
+    dm = abs(delta_memory(dm1,dm2))
+    
+    return total_vertices, total_distancia, pathTo, dt, dm
 
 
 def req_3(control, consulta_camaras, consulta_localidad):
