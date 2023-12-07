@@ -448,17 +448,17 @@ def max_pq_gravedad_comparendos(data_structs):
             
             for comparendo in lt.iterator(lista_comparendos): # Para cada comparendo en la lista de comparendos del vertice
                 gravedad = " ".join([comparendo["TIPO_SERVICIO"], comparendo["INFRACCION"]]) # Se obtiene la gravedad del comparendo
-                orden_gravedad = get_orden_gravedad(gravedad) # Se obtiene el orden de la gravedad
+                # orden_gravedad = get_orden_gravedad(gravedad) # Se obtiene el orden de la gravedad
                 
                 if mp.contains(mapa_gravedad_maxpq_comparendos, gravedad): # Si el mapa de gravedad con max_pq de comparendos contiene la gravedad  
                     entrada_mapa_gravedad_maxpq_comparendos = mp.get(mapa_gravedad_maxpq_comparendos, gravedad) # Se obtiene la pareja {llave: gravedad, valor: max_pq_comparendos}
                     max_pq_comparendos = me.getValue(entrada_mapa_gravedad_maxpq_comparendos) # Se obtiene la max_pq de comparendos de la gravedad
                     
-                    impq.insert(max_pq_comparendos, llave_vertice, orden_gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
+                    impq.insert(max_pq_comparendos, llave_vertice, gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
                     
                 else: # Si el mapa de gravedad con max_pq de comparendos no contiene la gravedad
                     max_pq_comparendos = impq.newIndexMinPQ(cmpfunction=compare_gravedad_pq)
-                    impq.insert(max_pq_comparendos, llave_vertice, orden_gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
+                    impq.insert(max_pq_comparendos, llave_vertice, gravedad) # Se agrega el vertice a la max_pq de comparendos de la gravedad
                     mp.put(mapa_gravedad_maxpq_comparendos, gravedad, max_pq_comparendos) # Se agrega el max_pq de comparendos al mapa de gravedad con max_pq de comparendos
 
 
@@ -973,8 +973,9 @@ def compare_gravedad_pq(data_1, data_2):
     """
     Función encargada de comparar dos datos
     """
-    data_1 = (data_1)
-    data_2 = (data_2['key'])
+    data_1 = get_orden_gravedad(data_1)
+    data_2 =  get_orden_gravedad(data_2)
+    data_2 = data_2["key"]
 
     if data_1 > data_2:
         return 1
