@@ -209,7 +209,7 @@ def add_data(data_structs, archivo, data):
                 lt.addLast(vertice["estaciones"], data) # Se agrega la estacion de policia a la lista de estaciones del vertice más cercano
                 
         # ============================================ Carga Mapa Estaciones ============================================ #
-              
+            nombre = data["EPONOMBRE"] # Se obtiene el nombre de la estacion de policia  
             if not mp.contains(mapa_estaciones, data["EPONOMBRE"]): # Si el mapa de estaciones contiene la estacion
                 reduced_data = new_reduced_data_estacion(data) # Se crea un vertice con la información obtenida en formato dict
                 nombre = data["EPONOMBRE"] # Se obtiene el nombre de la estacion de policia
@@ -435,8 +435,7 @@ def max_pq_gravedad_comparendos(data_structs):
     mapa_gravedad_comparendos = data_structs["mapa_gravedad_comparendos"] 
     mapa_gravedad_maxpq_comparendos = data_structs["mapa_gravedad_maxpq_comparendos"]
     
-    llaves_gravedad = mp.keySet(mapa_gravedad_comparendos)
-    print(llaves_gravedad)# Se obtienen las llaves del mapa de gravedad
+    llaves_gravedad = mp.keySet(mapa_gravedad_comparendos) # Se obtienen las llaves del mapa de gravedad
     for llave_gravedad in lt.iterator(llaves_gravedad): # Para cada gravedad en el mapa de gravedad
         entrada_mapa_gravedad = mp.get(mapa_gravedad_comparendos, llave_gravedad) # Se obtiene la pareja {llave: gravedad, valor: mapa de vertices de la gravedad}
         mapa_vertices_gravedad = me.getValue(entrada_mapa_gravedad) # Se obtiene el mapa de vertices de la gravedad
@@ -560,32 +559,35 @@ def get_orden_gravedad(codigo_gravedad):
     """
     
     orden_gravedad = [] # Lista que contiene el orden de la gravedad
-    
-    codigo_gravedad = codigo_gravedad.split(" ") # Se separa el codigo de gravedad en [tipo_servicio, codigo_gravedad]
-    if codigo_gravedad[0] == "Particular": # Si el tipo de servicio es particular
-        valor_1 = -1 # Se asigna el valor -1 al primer valor a comparar en el orden de gravedad
-    elif codigo_gravedad[0] == "Oficial": # Si el tipo de servicio es oficial
-        valor_1 = -2 # Se asigna el valor -2 al primer valor a comparar en el orden de gravedad
-    elif codigo_gravedad[0] == "Público": # Si el tipo de servicio es público  
-        valor_1 = -3 # Se asigna el valor -3 al primer valor a comparar en el orden de gravedad
-    else: # Si el tipo de servicio es cualquier otro
-        valor_1 = 0 # Se asigna el valor 0 al primer valor a comparar en el orden de gravedad
-    orden_gravedad.append(valor_1) # Se agrega el valor del tipo de servicio a la lista de orden de gravedad
-    
-    
-    if codigo_gravedad[1] == "F": # Si el codigo de gravedad es F
-        codigo_gravedad[1] = "F00" # Se cambia el codigo de gravedad a F00
-    
-    valor_2 = [] # Lista que contiene el segundo valor a comparar en el orden de gravedad
-    valor_2.append(-ord(codigo_gravedad[1][0])) # Para cada caracter en el codigo de gravedad
-    
-    valor_2.append(-ord(codigo_gravedad[1][1:-1])) # Se agrega el valor ASCII del caracter a la lista de orden de gravedad
+    try: 
+        c = codigo_gravedad.split(" ") # Se separa el codigo de gravedad en [tipo_servicio, codigo_gravedad]
+        if codigo_gravedad[0] == "Particular": # Si el tipo de servicio es particular
+            valor_1 = -1 # Se asigna el valor -1 al primer valor a comparar en el orden de gravedad
+        elif codigo_gravedad[0] == "Oficial": # Si el tipo de servicio es oficial
+            valor_1 = -2 # Se asigna el valor -2 al primer valor a comparar en el orden de gravedad
+        elif codigo_gravedad[0] == "Público": # Si el tipo de servicio es público  
+            valor_1 = -3 # Se asigna el valor -3 al primer valor a comparar en el orden de gravedad
+        else: # Si el tipo de servicio es cualquier otro
+            valor_1 = 0 # Se asigna el valor 0 al primer valor a comparar en el orden de gravedad
+        orden_gravedad.append(valor_1) # Se agrega el valor del tipo de servicio a la lista de orden de gravedad
+        
+        
+        if codigo_gravedad[1] == "F": # Si el codigo de gravedad es F
+            codigo_gravedad[1] = "F00" # Se cambia el codigo de gravedad a F00
+        
+        valor_2 = [] # Lista que contiene el segundo valor a comparar en el orden de gravedad
+        valor_2.append(-ord(codigo_gravedad[1][0])) # Para cada caracter en el codigo de gravedad
+        
+        valor_2.append(-ord(codigo_gravedad[1][1:-1])) # Se agrega el valor ASCII del caracter a la lista de orden de gravedad
+                
             
-         
-   
-    orden_gravedad.append(valor_2) # Se agrega el valor del caracter a la lista de orden de gravedad
     
-    return orden_gravedad
+        orden_gravedad.append(valor_2) # Se agrega el valor del caracter a la lista de orden de gravedad
+        
+        return orden_gravedad
+    
+    except:
+        print(codigo_gravedad)
         
 
 # ====================================================================================================================================================================== #
@@ -1020,9 +1022,11 @@ def compare_gravedad_pq(data_1, data_2):
     """
     Función encargada de comparar dos datos
     """
-    data_1 = get_orden_gravedad(data_1)
-    data_2 =  get_orden_gravedad(data_2)
-    data_2 = data_2["key"]
+    
+    
+    data_1 = data_1
+    data_2 =  data_2["key"]
+    
 
     if data_1 > data_2:
         return 1
@@ -1030,7 +1034,8 @@ def compare_gravedad_pq(data_1, data_2):
         return -1
     else:
         return 0
-
+        
+    
 # Funciones de ordenamiento
 
 

@@ -68,8 +68,8 @@ def load_data(data_structs):
     comparendos = csv.DictReader(f) # Se formatea el archivo de comparendos en diccionarios
     for comparendo in comparendos:
         model.add_data(data_structs, 'comparendos_2019_bogota_vertices.csv', comparendo)
-    # model.max_pq_localidades_comparendos(data_structs)
-    # model.max_pq_vehiculo_comparendos(data_structs)
+    model.max_pq_localidades_comparendos(data_structs)
+    model.max_pq_vehiculo_comparendos(data_structs)
     model.max_pq_gravedad_comparendos(data_structs)
 
     arcos_archivo = cf.data_dir + 'bogota_arcos.txt' # Se crea el camino al archivo de arcos
