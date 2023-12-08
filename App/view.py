@@ -183,10 +183,10 @@ def print_req_3(control):
                 f"Consulta Localidad: {consulta_localidad}\n"
                 f"====================================== Req No. 3 Results ======================================\n"
                 f"Total de Cámaras Puestas: {total_camaras}\n"
-                f"Identificadores de las Cámaras: {id_vertices}\n"
+                f"Identificadores de las Cámaras: {headers}\n"
                 f"Extensión de la Red de Cámaras: {round(extension, 2)} km\n"
                 f"Costo de la Red de Cámaras: {round(costo, 2)} COP\n"
-                f"Conecciones entre Cámaras:\n{df}\n"
+                f"Conecciones entre Cámaras:\n{tabulate(df, headers='keys', tablefmt='rounded_grid', showindex=True)}\n"
                 f"El tiempo de ejecución del requerimiento es: {dt} ms\n"
                 f"La memoria usada del requerimiento es: {dm} kB\n")
         
